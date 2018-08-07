@@ -21,15 +21,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service("okexPublicService")
 public class OkexPublicServiceImpl implements OkexPublicServiceI{
-	private static String tickerUrl = "https://www.okb.com/api/v1/ticker.do?symbol=bch_btc";
-	private static String marketDepthUrl = "https://www.okb.com/api/v1/depth.do?symbol=bch_btc";
-	private static String trandRecordUrl = "https://www.okb.com/api/v1/trades.do?symbol=bch_btc&since=7622718804";
+	
+	private static String marketDepthUrl = "https://www.okb.com/api/v1/depth.do?symbol=";
+	private static String trandRecordUrl = "https://www.okb.com/api/v1/trades.do?symbol=";
 	private static final String CHARSET = "utf-8";
 	/**
 	 * 获取交易ticker
 	 */
 	@Override
 	public String getTicker(String currency) {
+		String tickerUrl = "https://www.okb.com/api/v1/ticker.do?symbol=";
 		if(StringUtils.isBlank(currency)) {
 			currency = "bch_btc";
 		}

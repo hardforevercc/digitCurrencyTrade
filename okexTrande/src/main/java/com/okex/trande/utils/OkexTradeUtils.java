@@ -18,20 +18,13 @@ public class OkexTradeUtils {
 	 * @param tickerResp
 	 * @return
 	 */
-	public static TickerDetail dealTicker(String tickerResp) {
+	public static TickerBean dealTicker(String tickerResp) {
 		TickerDetail ticker = null;
 		TickerBean tickerObj = null;
 		if(StringUtils.isNotBlank(tickerResp)) {
-			tickerObj = JSONObject.parseObject(tickerResp, TickerBean.class);
-			tickerObj.getDate();
-			ticker = tickerObj.getTicker();
-			ticker.getHigh();
-			ticker.getLow();
-			ticker.getBuy();
-			ticker.getLast();
-			ticker.getVol();			
+			tickerObj = JSONObject.parseObject(tickerResp, TickerBean.class);			
 		}
-		return ticker;
+		return tickerObj;
 	}
 	/**
 	 * 处理市场数据
