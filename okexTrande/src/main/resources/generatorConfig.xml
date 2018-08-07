@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+ PUBLIC " -//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+ "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <classPathEntry
+            location="F:\tools\apache-maven-3.5.3\repository\mysql\mysql-connector-java\5.1.30\mysql-connector-java-5.1.30.jar"/>
+    <context id="my" targetRuntime="MyBatis3">
+    
+        <commentGenerator type="org.mybatis.generator.internal.CustomeCommentGenerator">
+            <property name="suppressDate" value="false"/>
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+        
+          
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://localhost:3306/okextrande" 
+                        userId="root"
+                        password="1234"/>
+        
+        <!--            
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
+                        connectionURL="jdbc:mysql://127.0.0.1:3306/ifrehx" userId="root"
+                        password="hucon"/> 
+        -->
+        
+        <!--  -->
+        <javaModelGenerator targetPackage="com.okex.mybatis.model"
+                            targetProject="F:\BigDigitalTrande\project\okexTrande\src\main\java">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+        
+        <sqlMapGenerator targetPackage="com.okex.mybatis"
+                         targetProject="F:\BigDigitalTrande\project\okexTrande\src\main\resources\mapper">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+        
+         <javaClientGenerator targetPackage="com.okex.mybatis.dao"
+                             targetProject="F:\BigDigitalTrande\project\okexTrande\src\main\java" type="XMLMAPPER">
+            <property name="enableSubPackages" value="true"/>
+         </javaClientGenerator>
+         
+         <table tableName="okex_trand_info" domainObjectName="OkexTradeInfo"
+               enableCountByExample="true" enableUpdateByExample="true"
+               enableDeleteByExample="false" enableSelectByExample="true"
+               selectByExampleQueryId="true">
+        </table>
+       <!--  
+        <table tableName="abs_jb_count" domainObjectName="AbsJbCount"
+               enableCountByExample="true" enableUpdateByExample="true"
+               enableDeleteByExample="false" enableSelectByExample="true"
+               selectByExampleQueryId="true">
+        </table>
+         -->
+         
+		<!--
+        <table tableName="abs_biz_info" domainObjectName="AbsBizInfo"
+               enableCountByExample="true" enableUpdateByExample="true"
+               enableDeleteByExample="false" enableSelectByExample="true"
+               selectByExampleQueryId="true">
+        </table>
+        <table tableName="abs_branch_info" domainObjectName="AbsBranchInfo"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="abs_caculate_fee" domainObjectName="AbsCaculateFee"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+       
+        <table tableName="abs_cust_info_base" domainObjectName="AbsCustInfoBase"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="abs_file_list" domainObjectName="AbsFileList"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="abs_lend_iou_" domainObjectName="AbsLendIou"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="abs_loan_contract" domainObjectName="AbsLoanContract"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="abs_loan_count" domainObjectName="AbsLoanCount"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="abs_model_control" domainObjectName="AbsModelControl"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="abs_model_info" domainObjectName="AbsModelInfo"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="abs_model_result" domainObjectName="AbsModelResult"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="abs_prod_info_base" domainObjectName="AbsProdInfoBase"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="abs_prod_info_fee" domainObjectName="AbsProdInfoFee"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="abs_prod_info_loan_model" domainObjectName="AbsProdInfoLoanModel"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="abs_prod_info_other" domainObjectName="AbsProdInfoOther"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="abs_prod_info_permit" domainObjectName="AbsProdInfoPermit"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="abs_prod_info_rate" domainObjectName="AbsProdInfoRate"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="abs_prod_info_repay_mode" domainObjectName="AbsProdInfoRepayMode"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="abs_prod_info_term" domainObjectName="AbsProdInfoTerm"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="abs_project_info" domainObjectName="AbsProjectInfo"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="abs_repay_detail" domainObjectName="AbsRepayDetail"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="abs_repay_plan" domainObjectName="AbsRepayPlan"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="abs_summary_info" domainObjectName="AbsSummaryInfo"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="task_info" domainObjectName="TaskInfo"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="task_param_info" domainObjectName="TaskParamInfo"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="abs_atx_list" domainObjectName="AbsAtxList"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+         </table>
+         <table tableName="abs_cpl_rule" domainObjectName="AbsCplRule"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="abs_cpl_bigdata_info" domainObjectName="AbsCplBigdataInfo"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>
+        <table tableName="abs_loan_quoto" domainObjectName="AbsLoanQuoto"
+               enableCountByExample="true" enableUpdateByExample="true"
+               enableDeleteByExample="false" enableSelectByExample="true"
+               selectByExampleQueryId="true">
+        </table>
+        <table tableName="abs_cust_info_base" domainObjectName="AbsCustInfoBase"
+               enableCountByExample="true" enableUpdateByExample="true"
+               enableDeleteByExample="false" enableSelectByExample="true"
+               selectByExampleQueryId="true">
+        </table>
+        <table tableName="abs_cust_info_mayi" domainObjectName="AbsCustInfoMayi"
+               enableCountByExample="true" enableUpdateByExample="true"
+               enableDeleteByExample="false" enableSelectByExample="true"
+               selectByExampleQueryId="false">
+        </table>
+        -->
+    </context>
+</generatorConfiguration>
