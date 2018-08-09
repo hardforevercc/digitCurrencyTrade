@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
-import com.okex.trande.serviceI.OkexMainFlowServiceI;
+import com.okex.trande.serviceI.OkexAdaMainFlowServiceI;
 import com.okex.trande.serviceI.OkexPublicServiceI;
 import com.okex.trande.utils.HttpUtils;
 
@@ -22,7 +22,7 @@ public class OkexQueryController {
 	@Autowired
 	OkexPublicServiceI okexPublicService;
 	@Autowired
-	OkexMainFlowServiceI okexMainFlowService;
+	OkexAdaMainFlowServiceI okexMainFlowService;
 	@RequestMapping("/test")
 	@ResponseBody
 	public String test(HttpServletRequest request) throws Exception {
@@ -33,7 +33,7 @@ public class OkexQueryController {
 		} catch (IOException e) {
 			log.error("内部系统处理错误",e);
 		}
-		return okexMainFlowService.Execute();
+		return okexMainFlowService.execute();
 	}
 	@RequestMapping("/index")
 	@ResponseBody

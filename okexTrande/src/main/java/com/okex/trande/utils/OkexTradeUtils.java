@@ -1,6 +1,8 @@
 package com.okex.trande.utils;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -68,5 +70,23 @@ public class OkexTradeUtils {
 			}
 		}
 		return depthResp;
+	}
+	public static Map<String,String> getFreeAc(String balance,String currency) throws Exception{
+		
+		if(StringUtils.isBlank(balance)) {
+			throw new Exception("the userinfo is empty!");
+		}
+		JSONObject balanceObj = JSONObject.parseObject(balance);
+		if(!"true".equals(balanceObj.getString("result"))) {
+			throw new Exception("the userinfo failed!");
+		}
+		JSONObject curencyAc = balanceObj.getJSONObject("info").getJSONObject("funds").getJSONObject("free");
+		String adaAc = curencyAc.getString("ada");
+		String usdtAc = curencyAc.getString("usdt");
+		log.info("adaAc:"+adaAc+",usdtAc:"+usdtAc);
+		Map<String,String> acMap = new HashMap<String,String>();
+		acMap.put("adaAc", adaAc);
+		acMap.put("usdtAc", usdtAc);
+		return acMap;
 	}
 }

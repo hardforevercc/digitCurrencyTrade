@@ -1,44 +1,58 @@
 package com.okex.trande.serviceImpl;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.okex.bean.TickerBean;
-import com.okex.mybatis.model.OkexTradeInfo;
-import com.okex.trande.serviceI.OkexMainFlowServiceI;
+import com.okex.bean.TradeSingleBean;
+import com.okex.trande.serviceI.OkexAdaMainFlowServiceI;
 import com.okex.trande.serviceI.OkexPrivateServiceI;
 import com.okex.trande.serviceI.OkexPublicServiceI;
+import com.okex.trande.utils.CommonUtils;
 import com.okex.trande.utils.OkexTradeUtils;
 
 import lombok.extern.slf4j.Slf4j;
 @Slf4j
-@Service("okexMainFlowService")
-public class OkexMainFlowServiceImpl implements OkexMainFlowServiceI{
+@Service("okexAdaMainFlowService")
+public class OkexAdaMainFlowServiceImpl implements OkexAdaMainFlowServiceI{
 	@Autowired
 	OkexPublicServiceI okexPublicService;
 	@Autowired
 	OkexPrivateServiceI okexPrivateService;
 	private static final String BTC_USDT = "btc_usdt";
 	private static final String ADA_BTC = "ada_usdt";
+	private static final String BUY = "buy";
+	private static final String SELL = "sell";
+	private static final String MARKETBUY = "buy_market";
+	private static final String MARKETSELL = "sell_market";
+	private static BigDecimal currprice;
+	private static BigDecimal amount;
+	private static BigDecimal myUsdt;
+	private static BigDecimal myAda;
 	/**
 	 * 基于ADA稳定的价格 制定ADA就交易策略
 	 * @throws Exception 
 	 */
-	public String Execute() throws Exception {		
+	public String execute() throws Exception {		
 		log.info("[***************OKEX TRADING START******************]");
-		log.info("step 1: get the price of ada&btc statrt...");
+		log.info("step 1: get the price of ada&btc statrt->"+CommonUtils.getTime());
 		String btcTickerResp = okexPublicService.getTicker(BTC_USDT);
 		TickerBean btcTicker = OkexTradeUtils.dealTicker(btcTickerResp);
 		if(null == btcTicker) {
-			throw new Exception("query the price of btc is empty!");
+			throw new Exception("query the price of btc is empty->"+CommonUtils.getTime());
 		}
-		log.info("the last price of btc_usdt = "+btcTicker.getTicker().getLast());
+		currprice = btcTicker.getTicker().getLast();
+		log.info("the last price of btc_usdt = "+currprice);
 		String adaTickerResp = okexPublicService.getTicker(ADA_BTC);
 		TickerBean adaTicker = OkexTradeUtils.dealTicker(adaTickerResp);
 		log.info("the last price of ada_usdt = "+adaTicker.getTicker().getLast());
-		log.info("step 1: get the price of ada&btc end...");
+		log.info("step 1: get the price of ada&btc end->"+CommonUtils.getTime());
 		/**
 		 * 等待数据完善根据数据信息修改交易规则
 		 * 获取最近时间段的交易信息：
@@ -46,7 +60,25 @@ public class OkexMainFlowServiceImpl implements OkexMainFlowServiceI{
 		 * 最大买入 卖出价格
 		 * 
 		 */
+		log.info("step 2: get the userinfo of ada&btc end->"+CommonUtils.getTime());
+		String balance = okexPrivateService.getBalance();
+		OkexTradeUtils.getFreeAc(balance, null);
 		
+//		TradeSingleBean order = new TradeSingleBean();
+		Map<String,String> orderMap = new HashMap<String,String>();
+//		order.setPrice(new BigDecimal("100.00"));
+//		order.setSymbol(ADA_BTC);
+//		order.setType(MARKETBUY);
+		if(currprice.compareTo(new BigDecimal("0.11")) >0) {
+			
+		}
+		
+		orderMap.put("type",BUY);
+		orderMap.put("amount", "100");
+		orderMap.put("symbol",ADA_BTC );
+		orderMap.put("price", currprice.toString());
+		String orderResp = okexPrivateService.exeOrder(orderMap);
+		log.info("订单结果:"+orderResp);
 		/**
 		 * 制定规则：
 		 * 强规则:
