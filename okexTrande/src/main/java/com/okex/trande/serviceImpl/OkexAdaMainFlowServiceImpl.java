@@ -35,6 +35,7 @@ public class OkexAdaMainFlowServiceImpl implements OkexAdaMainFlowServiceI{
 	private static BigDecimal amount;
 	private static BigDecimal myUsdt;
 	private static BigDecimal myAda;
+	private static BigDecimal perprice;
 	/**
 	 * 基于ADA稳定的价格 制定ADA就交易策略
 	 * @throws Exception 
@@ -62,16 +63,45 @@ public class OkexAdaMainFlowServiceImpl implements OkexAdaMainFlowServiceI{
 		 */
 		log.info("step 2: get the userinfo of ada&btc end->"+CommonUtils.getTime());
 		String balance = okexPrivateService.getBalance();
-		OkexTradeUtils.getFreeAc(balance, null);
-		
+		Map<String,String> freeAcMap = OkexTradeUtils.getFreeAc(balance, null);
+		myAda = new BigDecimal(freeAcMap.get("adaAc"));
+		myUsdt = new BigDecimal(freeAcMap.get("usdtAc"));
+		/**
+		 * 1.计算当前账户持币百分比 当前算法按单位为usdt换算
+		 * 2.判断当前持仓情况选择不同策略
+		 *		若当前账户持仓量>50%
+		 */
+		BigDecimal adaPercent = myAda.divide(myAda.add(myUsdt));
+		if(adaPercent.compareTo(new BigDecimal("0.5"))>0) {
+			log.info("当前持仓量>50");
+			if(currprice.compareTo(new BigDecimal("0.11")) <0 ) {
+				//若买入价>当前价 继续买入
+				if(perprice.compareTo(currprice) <0) {
+					//计算当前价格和 0.11零界点的百分比 价格比0.11越小 买入量越大 直到[买入金额 - 手续费金额 <=0]停止买入
+					BigDecimal curr = new BigDecimal("0.11").subtract(currprice).divide(new BigDecimal("0.11"));
+					amount = myUsdt.multiply(curr);
+				}else {
+					//若买入价>当前价 继续买入
+					
+				}
+				
+			}else if(currprice.compareTo(new BigDecimal("0.15")) >0) {
+				
+			}else {
+				
+			}
+		/**
+		 * 若当前持仓量<50%
+		 */
+		}else {
+			
+		}
 //		TradeSingleBean order = new TradeSingleBean();
 		Map<String,String> orderMap = new HashMap<String,String>();
 //		order.setPrice(new BigDecimal("100.00"));
 //		order.setSymbol(ADA_BTC);
 //		order.setType(MARKETBUY);
-		if(currprice.compareTo(new BigDecimal("0.11")) >0) {
-			
-		}
+		
 		
 		orderMap.put("type",BUY);
 		orderMap.put("amount", "100");
