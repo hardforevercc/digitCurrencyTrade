@@ -66,6 +66,14 @@ public class OkexAdaMainFlowServiceImpl implements OkexAdaMainFlowServiceI{
 		Map<String,String> freeAcMap = OkexTradeUtils.getFreeAc(balance, null);
 		myAda = new BigDecimal(freeAcMap.get("adaAc"));
 		myUsdt = new BigDecimal(freeAcMap.get("usdtAc"));
+		
+		Map<String,String> orderMap = new HashMap<String,String>();
+		orderMap.put("type",BUY);
+		orderMap.put("amount", "100");
+		orderMap.put("symbol",ADA_BTC );
+		orderMap.put("price", currprice.toString());
+		String orderResp = okexPrivateService.exeOrder(orderMap);
+		log.info("订单结果:"+orderResp);
 		/**
 		 * 1.计算当前账户持币百分比 当前算法按单位为usdt换算
 		 * 2.判断当前持仓情况选择不同策略
@@ -97,18 +105,13 @@ public class OkexAdaMainFlowServiceImpl implements OkexAdaMainFlowServiceI{
 			
 		}
 //		TradeSingleBean order = new TradeSingleBean();
-		Map<String,String> orderMap = new HashMap<String,String>();
+		
 //		order.setPrice(new BigDecimal("100.00"));
 //		order.setSymbol(ADA_BTC);
 //		order.setType(MARKETBUY);
 		
 		
-		orderMap.put("type",BUY);
-		orderMap.put("amount", "100");
-		orderMap.put("symbol",ADA_BTC );
-		orderMap.put("price", currprice.toString());
-		String orderResp = okexPrivateService.exeOrder(orderMap);
-		log.info("订单结果:"+orderResp);
+		
 		/**
 		 * 制定规则：
 		 * 强规则:
