@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONObject;
 import com.okex.bean.TickerBean;
 import com.okex.bean.TradeSingleBean;
+import com.okex.mybatis.dao.OkexExtMapper;
+import com.okex.mybatis.dao.OkexTradeRecordMapper;
+import com.okex.mybatis.model.OkexTradeRecord;
 import com.okex.trande.serviceI.OkexAdaMainFlowServiceI;
 import com.okex.trande.serviceI.OkexPrivateServiceI;
 import com.okex.trande.serviceI.OkexPublicServiceI;
@@ -25,17 +28,26 @@ public class OkexAdaMainFlowServiceImpl implements OkexAdaMainFlowServiceI{
 	OkexPublicServiceI okexPublicService;
 	@Autowired
 	OkexPrivateServiceI okexPrivateService;
+	@Autowired
+	OkexExtMapper okexExtDao;
+	@Autowired
+	OkexTradeRecordMapper okexTradeRecordDao;
 	private static final String BTC_USDT = "btc_usdt";
 	private static final String ADA_BTC = "ada_usdt";
 	private static final String BUY = "buy";
 	private static final String SELL = "sell";
+	private static String type;
 	private static final String MARKETBUY = "buy_market";
 	private static final String MARKETSELL = "sell_market";
-	private static BigDecimal currprice;
+	private static BigDecimal currprice;//当前价格
 	private static BigDecimal amount;
+	private static BigDecimal myTradeAmt;
 	private static BigDecimal myUsdt;
 	private static BigDecimal myAda;
-	private static BigDecimal perprice;
+	private static BigDecimal perprice;//持仓价格
+	private static final BigDecimal RULELEASTAMT = new BigDecimal("0.11");
+	private static final BigDecimal RULEMAXAMT = new BigDecimal("0.15");
+	private static final BigDecimal FEE = new BigDecimal("0.35").divide(new BigDecimal("100"));
 	/**
 	 * 基于ADA稳定的价格 制定ADA就交易策略
 	 * @throws Exception 
@@ -75,35 +87,75 @@ public class OkexAdaMainFlowServiceImpl implements OkexAdaMainFlowServiceI{
 		String orderResp = okexPrivateService.exeOrder(orderMap);
 		log.info("订单结果:"+orderResp);
 		/**
+		 * 挂单手续费0.15%;吃单手续费0.2%
+		 * 若当前持仓量为0;则按价格区间买入
 		 * 1.计算当前账户持币百分比 当前算法按单位为usdt换算
-		 * 2.判断当前持仓情况选择不同策略
-		 *		若当前账户持仓量>50%
+		 * 
 		 */
+		try {
+			BigDecimal price = okexExtDao.selectMyAvgPriceRecord();
+			log.info("price:"+price);
+		}catch(Exception e) {
+			log.error("查询数据库异常",e);
+		}
+		
+		if(myAda.compareTo(BigDecimal.ZERO) ==0) {
+			BigDecimal buyAmount = currprice.subtract(RULEMAXAMT).abs().divide(RULELEASTAMT);
+			myUsdt.multiply(buyAmount);
+			return null;
+		}
+		log.info("记录当前持仓价格");
+		/**
+		 * 当前持仓价格 = sum(历史买入价格*历史买入量)/sum(历史买入量)
+		 */
+		BigDecimal myAvgPrice = null;//= okexExtDao.selectMyAvgPriceRecord();
+		
+		
 		BigDecimal adaPercent = myAda.divide(myAda.add(myUsdt));
-		if(adaPercent.compareTo(new BigDecimal("0.5"))>0) {
-			log.info("当前持仓量>50");
-			if(currprice.compareTo(new BigDecimal("0.11")) <0 ) {
-				//若买入价>当前价 继续买入
-				if(perprice.compareTo(currprice) <0) {
-					//计算当前价格和 0.11零界点的百分比 价格比0.11越小 买入量越大 直到[买入金额 - 手续费金额 <=0]停止买入
-					BigDecimal curr = new BigDecimal("0.11").subtract(currprice).divide(new BigDecimal("0.11"));
-					amount = myUsdt.multiply(curr);
-				}else {
-					//若买入价>当前价 继续买入
-					
-				}
-				
-			}else if(currprice.compareTo(new BigDecimal("0.15")) >0) {
-				
+		log.info("当前ada持仓比:"+adaPercent);
+		if(currprice.compareTo(RULELEASTAMT) <0 ) {
+			//若买入价>当前价 继续买入
+			if(perprice.compareTo(currprice) <0) {
+				//计算当前价格和 0.11零界点的百分比 价格比0.11越小 买入量越大 直到[买入金额 - 手续费金额 <=0]停止买入
+				BigDecimal curr = RULELEASTAMT.subtract(currprice).divide(RULELEASTAMT);
+				myTradeAmt = curr.multiply(myUsdt); 
+				type = "buy";
 			}else {
-				
+				//若买入价<当前价 卖出
+				//溢价比例
+				BigDecimal earnper = currprice.subtract(perprice).divide(currprice);
+				if(currprice.compareTo(RULELEASTAMT) >0 && earnper.compareTo(FEE) > 0){
+					/** 
+					 * todo 
+					 * 计算卖出比例:卖出金额为 当前持仓量*溢价量
+					 * 执行卖出操作
+					 */
+					type = "sell";
+					myTradeAmt = earnper.multiply(myAda);
+				}					
 			}
 		/**
-		 * 若当前持仓量<50%
+		 * 若当前价格>0.15,则无买入行为	
 		 */
+		}else if(currprice.compareTo(RULEMAXAMT) > 0 ) {
+			BigDecimal curr = currprice.subtract(perprice).divide(currprice);
+			if(curr.compareTo(new BigDecimal("0.01")) >0) {
+				//执行卖出
+				amount = curr.multiply(myUsdt);
+			}
 		}else {
-			
+			boolean flag = myAvgPrice.subtract(currprice).compareTo(BigDecimal.ZERO) > 0 ? true: false;
+			BigDecimal curr = myAvgPrice.subtract(currprice).divide(RULEMAXAMT).abs();
+			if(flag) {
+				type = "buy";
+				myTradeAmt = curr.multiply(myUsdt);
+				
+			}else {
+				myTradeAmt = curr.multiply(myUsdt);
+				type = "sell";
+			}
 		}
+		
 //		TradeSingleBean order = new TradeSingleBean();
 		
 //		order.setPrice(new BigDecimal("100.00"));

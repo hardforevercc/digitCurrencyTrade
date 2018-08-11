@@ -40,12 +40,12 @@ mapper:
   not-empty: false
   identity: MYSQL
 
-#pagehelper: 
-#    helperDialect: mysql
-#    reasonable: true
-#    supportMethodsArguments: true
-#    params: count=countSql
-#    returnPageInfo: check
+pagehelper: 
+    helperDialect: mysql
+    reasonable: true
+    supportMethodsArguments: true
+    params: count=countSql
+    returnPageInfo: check
 
 mail: 
   host: smtp.exmail.qq.com

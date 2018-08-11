@@ -26,22 +26,22 @@
         
         <!--  -->
         <javaModelGenerator targetPackage="com.okex.mybatis.model"
-                            targetProject="F:\BigDigitalTrande\digitCurrencyTrade\okexTrande\src\main\java">
+                            targetProject="F:\BigDigitalTrande\project\okexTrande\src\main\java">
             <property name="enableSubPackages" value="true"/>
             <property name="trimStrings" value="true"/>
         </javaModelGenerator>
         
         <sqlMapGenerator targetPackage="com.okex.mybatis"
-                         targetProject="F:\BigDigitalTrande\digitCurrencyTrade\okexTrande\src\main\resources\mapper">
+                         targetProject="F:\BigDigitalTrande\project\okexTrande\src\main\resources\mapper">
             <property name="enableSubPackages" value="true"/>
         </sqlMapGenerator>
         
          <javaClientGenerator targetPackage="com.okex.mybatis.dao"
-                             targetProject="F:\BigDigitalTrande\digitCurrencyTrade\okexTrande\src\main\java" type="XMLMAPPER">
+                             targetProject="F:\BigDigitalTrande\project\okexTrande\src\main\java" type="XMLMAPPER">
             <property name="enableSubPackages" value="true"/>
          </javaClientGenerator>
          
-         <table tableName="okex_trade_record" domainObjectName="OkexTradeRecord"
+         <table tableName="okex_trand_info" domainObjectName="OkexTradeInfo"
                enableCountByExample="true" enableUpdateByExample="true"
                enableDeleteByExample="false" enableSelectByExample="true"
                selectByExampleQueryId="true">
