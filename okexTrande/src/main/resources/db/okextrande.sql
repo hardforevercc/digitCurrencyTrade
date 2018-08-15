@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 100121
 File Encoding         : 65001
 
-Date: 2018-08-13 21:30:29
+Date: 2018-08-15 21:18:43
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -21,18 +21,32 @@ SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE IF EXISTS `okex_trade_record`;
 CREATE TABLE `okex_trade_record` (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增ID',
-  `curprice` decimal(10,2) DEFAULT NULL COMMENT '当前价格',
-  `curamount` decimal(10,2) DEFAULT NULL COMMENT '当前数量',
-  `amt` decimal(10,2) DEFAULT NULL COMMENT '总金额',
+  `curprice` decimal(10,4) DEFAULT NULL COMMENT '当前价格',
+  `curamount` decimal(10,6) DEFAULT NULL COMMENT '当前数量',
+  `amt` decimal(10,6) DEFAULT NULL COMMENT '总金额',
   `type` varchar(20) DEFAULT NULL COMMENT '类型:sell 卖出 buy买入',
   `isOk` varchar(2) DEFAULT NULL COMMENT '交易是否成功 Y成功 N失败',
   `create_date` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of okex_trade_record
 -- ----------------------------
+INSERT INTO `okex_trade_record` VALUES ('1', '0.0900', '119.770000', '11.370000', 'buy', 'Y', null);
+INSERT INTO `okex_trade_record` VALUES ('2', '0.0962', '0.000000', '0.000000', 'buy', 'N', '2018-08-15 20:56:30');
+INSERT INTO `okex_trade_record` VALUES ('3', '0.0966', '0.000000', '0.000000', 'buy', 'N', '2018-08-15 20:59:54');
+INSERT INTO `okex_trade_record` VALUES ('4', '0.0969', '0.000000', '0.000000', 'buy', 'N', '2018-08-15 21:00:13');
+INSERT INTO `okex_trade_record` VALUES ('5', '0.0969', '0.000000', '0.000000', 'buy', 'N', '2018-08-15 21:00:20');
+INSERT INTO `okex_trade_record` VALUES ('6', '0.0969', '0.000000', '0.000000', 'buy', 'N', '2018-08-15 21:00:27');
+INSERT INTO `okex_trade_record` VALUES ('7', '0.0969', '0.000000', '0.000000', 'buy', 'N', '2018-08-15 21:00:33');
+INSERT INTO `okex_trade_record` VALUES ('8', '0.0965', '0.000000', '0.000000', 'buy', 'N', '2018-08-15 21:00:39');
+INSERT INTO `okex_trade_record` VALUES ('9', '0.0961', '0.000000', '0.000000', 'buy', 'N', '2018-08-15 21:01:06');
+INSERT INTO `okex_trade_record` VALUES ('10', '0.0961', '0.000000', '0.000000', 'buy', 'N', '2018-08-15 21:01:33');
+INSERT INTO `okex_trade_record` VALUES ('11', '0.0961', '0.000000', '0.000000', 'buy', 'N', '2018-08-15 21:01:34');
+INSERT INTO `okex_trade_record` VALUES ('12', '0.0961', '0.000000', '0.000000', 'buy', 'N', '2018-08-15 21:01:44');
+INSERT INTO `okex_trade_record` VALUES ('13', '0.0961', '0.000000', '0.000000', 'buy', 'N', '2018-08-15 21:01:56');
+INSERT INTO `okex_trade_record` VALUES ('14', '0.0951', '1.000000', '0.100000', 'buy', 'Y', '2018-08-15 21:03:01');
 
 -- ----------------------------
 -- Table structure for okex_trand_info

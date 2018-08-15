@@ -1,6 +1,7 @@
 package com.okex.trande.serviceImpl;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,7 +65,8 @@ public class OkexAdaMainFlowServiceImpl implements OkexAdaMainFlowServiceI{
 		log.info("the last price of btc_usdt = "+currprice);
 		String adaTickerResp = okexPublicService.getTicker(ADA_BTC);
 		TickerBean adaTicker = OkexTradeUtils.dealTicker(adaTickerResp);
-		log.info("the last price of ada_usdt = "+adaTicker.getTicker().getLast());
+		BigDecimal currAda = adaTicker.getTicker().getLast();
+		log.info("the last price of ada_usdt = "+currAda);
 		log.info("step 1: get the price of ada&btc end->"+CommonUtils.getTime());
 		/**
 		 * 等待数据完善根据数据信息修改交易规则
@@ -81,10 +83,32 @@ public class OkexAdaMainFlowServiceImpl implements OkexAdaMainFlowServiceI{
 		
 		Map<String,String> orderMap = new HashMap<String,String>();
 		orderMap.put("type",BUY);
-		orderMap.put("amount", "100");
+		orderMap.put("amount", "1");
 		orderMap.put("symbol",ADA_BTC );
-		orderMap.put("price", currprice.toString());
+		orderMap.put("price", currAda.toString());
+		log.info("单笔订单请求:"+JSONObject.toJSONString(orderMap));
+		
 		String orderResp = okexPrivateService.exeOrder(orderMap);
+		if(null == orderResp) {
+			
+		}
+		OkexTradeRecord record = new OkexTradeRecord();
+		if(JSONObject.parseObject(orderResp).getBooleanValue("result")) {
+			record.setAmt(currAda.multiply(new BigDecimal("1")));
+			record.setCreateDate(new Date());
+			record.setCurprice(currAda);
+			record.setCuramount(new BigDecimal("1"));
+			record.setIsok("Y");
+			record.setType("buy");
+		}else {
+			record.setAmt(currAda.multiply(BigDecimal.ZERO));
+			record.setCreateDate(new Date());
+			record.setCurprice(currAda);
+			record.setCuramount(BigDecimal.ZERO);
+			record.setIsok("N");
+			record.setType("buy");
+		}
+		okexTradeRecordDao.insert(record);
 		log.info("订单结果:"+orderResp);
 		/**
 		 * 挂单手续费0.15%;吃单手续费0.2%
@@ -101,15 +125,19 @@ public class OkexAdaMainFlowServiceImpl implements OkexAdaMainFlowServiceI{
 		
 		if(myAda.compareTo(BigDecimal.ZERO) ==0) {
 			BigDecimal buyAmount = currprice.subtract(RULEMAXAMT).abs().divide(RULELEASTAMT);
-			myUsdt.multiply(buyAmount);
+			buyAmount = myUsdt.multiply(buyAmount);
+			log.info("当前持仓量为0,首次买入量为:"+buyAmount);
 			return null;
 		}
 		log.info("记录当前持仓价格");
 		/**
 		 * 当前持仓价格 = sum(历史买入价格*历史买入量)/sum(历史买入量)
 		 */
-		BigDecimal myAvgPrice = null;//= okexExtDao.selectMyAvgPriceRecord();
-		
+		BigDecimal myAvgPrice =  okexExtDao.selectMyAvgPriceRecord();
+		if(null == myAvgPrice) {
+			log.info("当前持仓量为0");
+			return null;
+		}
 		
 		BigDecimal adaPercent = myAda.divide(myAda.add(myUsdt));
 		log.info("当前ada持仓比:"+adaPercent);
