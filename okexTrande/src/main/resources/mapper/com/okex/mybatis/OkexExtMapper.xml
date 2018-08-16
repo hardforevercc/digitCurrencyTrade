@@ -12,11 +12,20 @@
 	    from okex_trade_record
 	    where create_date = (select max(create_date) from okex_trade_record and type = "buy" and isOk = "Y")
   </select>
+  <!-- 查询平均持仓价格 -->
   <select id="selectMyAvgPriceRecord"  resultType="java.math.BigDecimal">
 	    select 
 	    sum(amt)/sum(curamount)
 	    from okex_trade_record
 	    where type = "buy" and isOk = "Y"
+  </select>
+  <!-- 查询最近买入价格 -->
+  <select id="selectLastBuyPrice"  resultType="java.math.BigDecimal">
+	    SELECT curprice FROM okex_trade_record WHERE create_date = (SELECT MAX(create_date) FROM okex_trade_record)
+  </select>
+  <!-- 查询已花费usdt -->
+  <select id="selectCostUsdtByAda"  resultType="java.math.BigDecimal">
+	    SELECT SUM(amt) FROM okex_trade_record WHERE type = "buy" AND isOk = "Y"
   </select>
   <resultMap id="OkexTradeRecordMap" type="com.okex.mybatis.model.OkexTradeRecord">
     <!--
