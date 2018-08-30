@@ -6,7 +6,8 @@ spring:
         #url: jdbc:mysql://ifredev.mysqldb.chinacloudapi.cn:3306/ifrehx?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true
         #username: ifredev%hx
         #password: ifreDIje0382
-        url: jdbc:mysql://47.106.84.51:3306/okextrande?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
+        #url: jdbc:mysql://47.106.84.51:3306/okextrande?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
+        url: jdbc:mysql://localhost:3306/okextrande?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&useSSL=false
         username: root
         password: Ja5668!@
         #使用druid数据源

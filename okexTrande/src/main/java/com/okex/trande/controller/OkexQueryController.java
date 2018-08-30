@@ -34,7 +34,7 @@ public class OkexQueryController {
 		} catch (IOException e) {
 			log.error("内部系统处理错误",e);
 		}
-		return okexMainFlowService.execute();
+		return "交易进行中";
 	}
 	@RequestMapping("/index")
 	@ResponseBody

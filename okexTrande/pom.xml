@@ -134,7 +134,7 @@
 	        	<groupId>org.springframework.boot</groupId>
 	            <artifactId>spring-boot-maven-plugin</artifactId>
 	        	<configuration>
-	                <mainClass>com.ots.Springboot2StartApplication</mainClass>
+	                <mainClass>com.okex.OkexTrandeApplication</mainClass>
 	            </configuration>
 	            <executions>
 	                <execution>

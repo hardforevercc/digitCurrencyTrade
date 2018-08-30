@@ -14,5 +14,6 @@ public class OkexTrandeApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(OkexTrandeApplication.class, args);
 		LOG.info("[===okex-server starting=="+ "]");
+		
 	}
 }
