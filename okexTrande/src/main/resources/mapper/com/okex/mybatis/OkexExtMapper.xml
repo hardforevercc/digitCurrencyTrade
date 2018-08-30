@@ -21,7 +21,8 @@
   </select>
   <!-- 查询最近买入价格 -->
   <select id="selectLastBuyPrice"  resultType="java.math.BigDecimal">
-	    SELECT curprice FROM okex_trade_record WHERE id = (SELECT MAX(id) FROM okex_trade_record)
+	    SELECT curprice FROM okex_trade_record WHERE id = (SELECT 
+	    MAX(id) FROM okex_trade_record)
   </select>
   <!-- 查询已花费usdt -->
   <select id="selectCostUsdtByAda"  resultType="java.math.BigDecimal">
