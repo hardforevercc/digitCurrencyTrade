@@ -41,15 +41,17 @@ public class OkexAdaMainFlowServiceImpl implements OkexAdaMainFlowServiceI{
 	private static final String MARKETBUY = "buy_market";
 	private static final String MARKETSELL = "sell_market";
 	private static BigDecimal currprice;//当前价格
+	private static BigDecimal currAda;//当前价格
 	private static BigDecimal amount;
 	private static BigDecimal myTradeAmt;
 	private static BigDecimal myUsdt;
 	private static BigDecimal myAda;
 	private static final BigDecimal RULELEASTAMT = new BigDecimal("0.11");
 	private static final BigDecimal RULEMAXAMT = new BigDecimal("0.15");
-	private static final BigDecimal FEE = new BigDecimal("0.35").divide(new BigDecimal("100"));
+	private static final BigDecimal FEE = new BigDecimal("0.37").divide(new BigDecimal("100"));
 	private static BigDecimal lastBuyPrice;
 	private static int i = 0;
+	private static Map<String,String> tradeMap = new HashMap<String,String>();
 	/**
 	 * 基于ADA稳定的价格 制定ADA就交易策略
 	 * @throws Exception 
@@ -58,7 +60,7 @@ public class OkexAdaMainFlowServiceImpl implements OkexAdaMainFlowServiceI{
 	public void execute() throws Exception {
 		while(true) {
 			runAda();
-			Thread.sleep(200);
+			Thread.sleep(400);
 		}
 		
 		
@@ -78,7 +80,7 @@ public class OkexAdaMainFlowServiceImpl implements OkexAdaMainFlowServiceI{
 			log.info("[$$$$$$$$$$$][the last price of btc_usdt = "+currprice);
 			String adaTickerResp = okexPublicService.getTicker(ADA_BTC);
 			TickerBean adaTicker = OkexTradeUtils.dealTicker(adaTickerResp);
-			BigDecimal currAda = adaTicker.getTicker().getLast();
+			currAda = adaTicker.getTicker().getLast();
 			log.info("[$$$$$$$$$$$][the last price of ada_usdt = "+currAda);
 			log.info("step 1: get the price of ada&btc end->"+CommonUtils.getTime());
 			/**
@@ -99,6 +101,10 @@ public class OkexAdaMainFlowServiceImpl implements OkexAdaMainFlowServiceI{
 				//perprice = lastBuyPrice;
 			}
 			Map<String,String> orderMap = new HashMap<String,String>();
+			if(lastBuyPrice.compareTo(currAda) == 0) {
+				log.info("第{"+i+"}次交易失败,lastBuyPrice=currAda["+lastBuyPrice);
+				return;
+			}
 			/**
 			 * 挂单手续费0.15%;吃单手续费0.2%
 			 * 若当前持仓量为0;则按价格区间买入
@@ -115,9 +121,11 @@ public class OkexAdaMainFlowServiceImpl implements OkexAdaMainFlowServiceI{
 			 * 当前持仓价格 = sum(历史买入价格*历史买入量)/sum(历史买入量)
 			 */
 			if(myAda.compareTo(BigDecimal.ONE) < 1) {
+				log.info("第{"+i+"}次交易,myAda持有量<1,视为空仓,持仓价格设置为0");
 				lastBuyPrice = BigDecimal.ZERO;
 			}
 			if(myUsdt.compareTo(BigDecimal.ONE) <0) {
+				log.info("第{"+i+"}次交易,myUsdt持有量<1,视为满仓");
 				BigDecimal earnper = currAda.subtract(lastBuyPrice).divide(currAda,BigDecimal.ROUND_HALF_DOWN);
 				if( earnper.compareTo(FEE) > 0){						
 					type = "sell";
@@ -125,23 +133,26 @@ public class OkexAdaMainFlowServiceImpl implements OkexAdaMainFlowServiceI{
 					if(myTradeAmt.compareTo(BigDecimal.ONE) <0) {
 						myTradeAmt = BigDecimal.ONE;
 					}
-				}
-				orderMap.put("type",type);
-				orderMap.put("amount",myTradeAmt.toString());
-				orderMap.put("symbol",ADA_BTC );
-				orderMap.put("price", currAda.toString());
-				log.info("单笔订单请求:"+JSONObject.toJSONString(orderMap));
+					orderMap.put("type",type);
+					orderMap.put("amount",myTradeAmt.toString());
+					orderMap.put("symbol",ADA_BTC );
+					orderMap.put("price", currAda.toString());
+					log.info("单笔订单请求:"+JSONObject.toJSONString(orderMap));		
+					boolean flag = exeTrade(orderMap);
 					
-				
-				boolean flag = exeTrade(orderMap);
-				
-				if(flag) {
-					lastBuyPrice = currAda;
-					insertIntoRecord(orderMap,flag);
+					if(flag) {
+						lastBuyPrice = currAda;
+						insertIntoRecord(orderMap,flag);
+					}else {
+						log.info("交易失败第{"+i+"}次");
+					}
+					i++;
+					return;
 				}else {
-					log.info("交易失败第{"+i+"}次");
+					log.info("第{"+i+"}次交易,myUsdt持有量<1,满仓，执行卖出失败");
+					return;
 				}
-				i++;
+				
 				
 			}
 			
@@ -269,6 +280,20 @@ public class OkexAdaMainFlowServiceImpl implements OkexAdaMainFlowServiceI{
 			log.error("第{"+i+"}次执行成功出现异常",e);
 		}
 		
+	}
+	public void exeTradeOrder(String type,String amount,String price) {
+		tradeMap.put("type",type);
+		tradeMap.put("amount",amount.toString());
+		tradeMap.put("symbol",ADA_BTC );
+		tradeMap.put("price", price.toString());
+		boolean flag = exeTrade(tradeMap);
+		
+		if(flag) {
+			lastBuyPrice = currAda;
+			insertIntoRecord(tradeMap,flag);
+		}else {
+			log.info("交易失败第{"+i+"}次");
+		}
 	}
 		
 	private void insertIntoRecord(Map<String,String> map,boolean flag) {
