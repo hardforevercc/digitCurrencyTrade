@@ -318,6 +318,7 @@ public class OkexAdaMainFlowServiceImpl implements OkexAdaMainFlowServiceI{
 	 * @return
 	 */
 	private boolean exeTrade(Map<String,String> orderMap) {
+		log.info("订单信息:"+JSONObject.toJSONString(orderMap));
 		String orderResp = okexPrivateService.exeOrder(orderMap);
 		log.info("订单结果:"+orderResp);
 		if(null == orderResp) {

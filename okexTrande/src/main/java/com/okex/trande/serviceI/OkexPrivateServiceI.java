@@ -1,5 +1,6 @@
 package com.okex.trande.serviceI;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,7 +28,7 @@ public interface OkexPrivateServiceI {
 	 * 取消订单
 	 * @return
 	 */
-	public String cancelOrder();
+	public String cancelOrder(Map<String,Object> paramMap);
 	/**
 	 * 获取下单信息
 	 * @return
@@ -42,6 +43,6 @@ public interface OkexPrivateServiceI {
 	 * 获取历史订单信息（返回近两天信息）
 	 * @return
 	 */
-	public String getHisOrders();
+	public Map<String,List<String>> getHisOrders(Map<String,String> map);
 	
 }

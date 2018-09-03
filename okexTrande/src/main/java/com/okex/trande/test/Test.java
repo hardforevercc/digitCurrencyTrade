@@ -1,6 +1,7 @@
 package com.okex.trande.test;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
@@ -11,6 +12,10 @@ import com.okex.trande.utils.SignatureUtils;
 public class Test {
 
 	public static void main(String[] args) {
+		BigDecimal costUsdt = new BigDecimal("11.470000");
+		BigDecimal myUsdt = new BigDecimal("88.5139");
+		BigDecimal adaPercent = costUsdt.divide(costUsdt.add(myUsdt));
+		System.out.println(adaPercent);
 		Map<String,String> map = new HashMap<String,String>();
 		map.put("api_key", "8d8f9938-3e93-40b7-bb42-cedcbf49235a");
 		map.put("symbol","btc_usdt");

@@ -6,8 +6,8 @@ public enum OkexTradeEnums {
 	TRADEBATCHURL("https://www.okb.com/api/v1/batch_trade.do","批量订单下单"),
 	CANCELORDERURL("https://www.okb.com/api/v1/cancel_order.do","撤销订单"),
 	ORDERINFOURL("https://www.okb.com/api/v1/order_info.do","用户订单信息"),
-	ORDERSINFOURL("https://www.okex.com/api/v1/orders_info.do","批量获取用户订单信息"),
-	HISORDERSURL("https://www.okex.com/api/v1/order_history.do","用户近2天订单信息");
+	ORDERSINFOURL("https://www.okb.com/api/v1/orders_info.do","批量获取用户订单信息"),
+	HISORDERSURL("https://www.okb.com/api/v1/order_history.do","用户近2天订单信息");
 	
 	private String url;
 	private String desc;

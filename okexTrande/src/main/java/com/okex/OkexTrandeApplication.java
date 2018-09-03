@@ -13,7 +13,7 @@ public class OkexTrandeApplication {
 	private static final Logger LOG = LoggerFactory.getLogger(OkexTrandeApplication.class);
 	public static void main(String[] args) {
 		SpringApplication.run(OkexTrandeApplication.class, args);
-		LOG.info("[===okex-server starting=="+ "]");
+		LOG.info("[===okex-server starting==]");
 		
 	}
 }

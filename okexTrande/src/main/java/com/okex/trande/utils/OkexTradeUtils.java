@@ -81,12 +81,19 @@ public class OkexTradeUtils {
 			throw new Exception("the userinfo failed!");
 		}
 		JSONObject curencyAc = balanceObj.getJSONObject("info").getJSONObject("funds").getJSONObject("free");
-		String adaAc = curencyAc.getString("ada");
-		String usdtAc = curencyAc.getString("usdt");
-		log.info("adaAc:"+adaAc+",usdtAc:"+usdtAc);
+		String freeAda = curencyAc.getString("ada");
+		String freeUsdt = curencyAc.getString("usdt");
+		
+		JSONObject freezedAc = balanceObj.getJSONObject("info").getJSONObject("funds").getJSONObject("freezed");
+		String freezedAda = freezedAc.getString("ada");
+		String freezedUsdt = freezedAc.getString("usdt");
+		
 		Map<String,String> acMap = new HashMap<String,String>();
-		acMap.put("adaAc", adaAc);
-		acMap.put("usdtAc", usdtAc);
+		acMap.put("adaAc", freeAda);
+		acMap.put("usdtAc", freeUsdt);
+		acMap.put("freezedAda", freezedAda);
+		acMap.put("freezedUsdt", freezedUsdt);
+		
 		return acMap;
 	}
 }
