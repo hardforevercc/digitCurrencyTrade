@@ -102,7 +102,19 @@ public class OkexAdaMainFlowV2ServiceImpl implements OkexAdaMainFlowV2ServiceI{
 			
 			BigDecimal holdPercent =myAda.multiply(currAdaPrice).divide(myAda.multiply(currAdaPrice).add(myUsdt),BigDecimal.ROUND_DOWN); 
 			BigDecimal myUsdtToAda = myUsdt.divide(currAdaPrice,BigDecimal.ROUND_DOWN);
-			
+			log.info("my free usdt to ada = " + myUsdtToAda);
+			BigDecimal sumAmt = BigDecimal.ZERO;
+			BigDecimal sumAmount = BigDecimal.ZERO;
+			if(priceList.size() > 0 && amountList.size() >0) {
+				for(int i =0;i < priceList.size();i++) {
+					sumAmt = sumAmt.add(priceList.get(i).multiply(amountList.get(i)));
+					sumAmount = sumAmount.add(amountList.get(i));
+				}
+				lastBuyPrice = sumAmt.divide(sumAmount,BigDecimal.ROUND_DOWN);
+			}else {
+				sumAmount = myUsdtToAda.multiply(new BigDecimal("0"));
+			}
+			log.info("lastBuyPrice = "+lastBuyPrice+","+"sumAmount = "+sumAmount);
 			//boolean flag = lastBuyPrice.subtract(currAdaPrice.multiply(BigDecimal.ONE.add(FEE))).compareTo(BigDecimal.ZERO) >= 0?true:false;
 			log.info("lastBuyPrice is equal to "+ lastBuyPrice);
 			if(lastBuyPrice.subtract(currAdaPrice).compareTo(BigDecimal.ZERO) >= 0) {
@@ -263,6 +275,7 @@ public class OkexAdaMainFlowV2ServiceImpl implements OkexAdaMainFlowV2ServiceI{
 				log.info("the price of current holding:lastBuyPrice ="+lastBuyPrice);
 			}else {
 				priceList.clear();
+				amountList.clear();
 				//priceList.add(BigDecimal.ZERO);
 				lastBuyPrice = currAdaPrice;
 			}
