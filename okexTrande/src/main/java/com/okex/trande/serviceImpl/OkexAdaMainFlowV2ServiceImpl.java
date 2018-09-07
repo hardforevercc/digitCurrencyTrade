@@ -120,10 +120,18 @@ public class OkexAdaMainFlowV2ServiceImpl implements OkexAdaMainFlowV2ServiceI{
 			if(lastBuyPrice.subtract(currAdaPrice).compareTo(BigDecimal.ZERO) >= 0) {
 				if(lastBuyPrice.subtract(currAdaPrice.multiply(BigDecimal.ONE.add(FEE.multiply(new BigDecimal("1.5"))))).compareTo(BigDecimal.ZERO) >= 0) {
 					type = BUY;
+					buyAndsellPercent = myUsdtToAda.multiply(buyAndsellPercent);
+					if(myUsdtToAda.compareTo(new BigDecimal("100")) <0) {
+						buyAndsellPercent = myUsdtToAda;
+					}
 				}
 			}else {
 				if(currAdaPrice.subtract(lastBuyPrice.multiply(BigDecimal.ONE.add(FEE))).compareTo(BigDecimal.ZERO) >= 0) {
 					type = SELL;
+					buyAndsellPercent = myAda.multiply(buyAndsellPercent);
+					if(myAda.compareTo(new BigDecimal("100")) <0) {
+						buyAndsellPercent = myAda;
+					}
 				}
 			}
 			//视为空仓
@@ -141,6 +149,7 @@ public class OkexAdaMainFlowV2ServiceImpl implements OkexAdaMainFlowV2ServiceI{
 				
 				return;
 			}
+			
 			//当前价格小于0.11
 			if(currAdaPrice.compareTo(RULELEASTAMT) < 0 ) {
 				if(currAdaPrice.compareTo(new BigDecimal("0.09")) <=0 ) {
@@ -149,9 +158,14 @@ public class OkexAdaMainFlowV2ServiceImpl implements OkexAdaMainFlowV2ServiceI{
 						buyAndsellPercent = new BigDecimal("0.5").subtract(holdPercent);
 						exeTradeOrder(BUY,myUsdtToAda.multiply(buyAndsellPercent).toString(),currAdaPrice.toString());
 						return;
-					}else {					
-						exeTradeOrder(type,myAda.multiply(buyAndsellPercent).toString(),currAdaPrice.toString());
-						return;					
+					}else {
+						if(StringUtils.isNotBlank(type)) {
+							exeTradeOrder(type,buyAndsellPercent.toString(),currAdaPrice.toString());
+							return;	
+						}else {
+							return;
+						}
+										
 					}
 				}else if(currAdaPrice.compareTo(new BigDecimal("0.1")) <=0){
 					if
@@ -160,16 +174,12 @@ public class OkexAdaMainFlowV2ServiceImpl implements OkexAdaMainFlowV2ServiceI{
 						exeTradeOrder(BUY,myUsdtToAda.multiply(buyAndsellPercent).toString(),currAdaPrice.toString());
 						return;
 					}else {
-						if(type.equals(BUY)) {
-							buyAndsellPercent = myUsdtToAda.multiply(buyAndsellPercent);
-						}else
-						if(type.equals(SELL)) {
-							buyAndsellPercent = myAda.multiply(buyAndsellPercent);
+						if(StringUtils.isNotBlank(type)) {
+							exeTradeOrder(type,buyAndsellPercent.toString(),currAdaPrice.toString());
+							return;	
 						}else {
 							return;
 						}
-						exeTradeOrder(type,buyAndsellPercent.toString(),currAdaPrice.toString());
-						return;	
 					}
 				}else {
 					if(holdPercent.compareTo(new BigDecimal("0.3")) <= 0) {
@@ -182,20 +192,12 @@ public class OkexAdaMainFlowV2ServiceImpl implements OkexAdaMainFlowV2ServiceI{
 					}else {
 						
 						if(StringUtils.isNotBlank(type)) {
-							if(type.equals(BUY)) {
-								buyAndsellPercent = myUsdtToAda.multiply(buyAndsellPercent);
-							}else
-							if(type.equals(SELL)) {
-								buyAndsellPercent = myAda.multiply(buyAndsellPercent);
-							}else {
-								return;
-							}
 							exeTradeOrder(type,buyAndsellPercent.toString(),currAdaPrice.toString());
+							return;	
 						}else {
-							log.info("the price is not reasonable...no deals!");
+							return;
 						}
 						
-						return;
 					}
 				}
 			}
@@ -207,18 +209,11 @@ public class OkexAdaMainFlowV2ServiceImpl implements OkexAdaMainFlowV2ServiceI{
 					return;
 				}else {
 					if(StringUtils.isNotBlank(type)) {
-						if(type.equals(BUY)) {
-							buyAndsellPercent = myUsdtToAda.multiply(buyAndsellPercent);
-						}
-						if(type.equals(SELL)) {
-							buyAndsellPercent = myAda.multiply(buyAndsellPercent);
-						}
 						exeTradeOrder(type,buyAndsellPercent.toString(),currAdaPrice.toString());
+						return;	
 					}else {
-						log.info("the price is not reasonable...no deals!");
+						return;
 					}
-					
-					return;
 				}
 			}
 			//当前价格大于等于0.11,小于等于0.15
@@ -231,17 +226,11 @@ public class OkexAdaMainFlowV2ServiceImpl implements OkexAdaMainFlowV2ServiceI{
 					}
 				}else {
 					if(StringUtils.isNotBlank(type)) {
-						if(type.equals(BUY)) {
-							buyAndsellPercent = myUsdtToAda.multiply(buyAndsellPercent);
-						}
-						if(type.equals(SELL)) {
-							buyAndsellPercent = myAda.multiply(buyAndsellPercent);
-						}
 						exeTradeOrder(type,buyAndsellPercent.toString(),currAdaPrice.toString());
+						return;	
 					}else {
-						log.info("the price is not reasonable...no deals!");
+						return;
 					}
-					return;
 					
 				}
 			}
