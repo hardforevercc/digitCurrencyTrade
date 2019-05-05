@@ -5,7 +5,6 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,10 +27,17 @@ public class OkexQueryController {
 	@ResponseBody
 	public String test(HttpServletRequest request) throws Exception {
 		String currency = null;
+		
 		try {
-			currency = JSONObject.parseObject(HttpUtils.getMsg(request)).getString("currency");
+			currency = HttpUtils.getMsg(request);
+			log.info("currency="+currency);
+			log.info(JSONObject.parseObject(currency).toJSONString());
+			currency = JSONObject.parseObject(currency).getString("currency");
 			log.info("请求查询交易对:"+currency);
-		} catch (IOException e) {
+			log.info("TICKER:"+okexPublicService.getTicker(currency));
+			log.info("MARKET:"+okexPublicService.getMarket(currency));
+			log.info("DEPTH :"+okexPublicService.getDepth(currency));
+		} catch (Exception e) {
 			log.error("内部系统处理错误",e);
 		}
 		return "交易进行中";

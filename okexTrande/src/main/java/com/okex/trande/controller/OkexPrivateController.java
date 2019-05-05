@@ -1,6 +1,5 @@
 package com.okex.trande.controller;
 
-import java.io.IOException;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
+import com.okex.trande.serviceI.OkecGridServiceI;
 import com.okex.trande.serviceI.OkexAdaMainFlowServiceI;
 import com.okex.trande.serviceI.OkexAdaMainFlowV2ServiceI;
 import com.okex.trande.serviceI.OkexPrivateServiceI;
@@ -26,6 +26,9 @@ public class OkexPrivateController {
 	OkexAdaMainFlowServiceI okexAdaMainFlowService;
 	@Autowired
 	OkexAdaMainFlowV2ServiceI okexAdaMainFlowV2Service;
+	@Autowired OkecGridServiceI okecGridService;
+	
+	
 	@RequestMapping("/getUserInfo")
 	public String getBalance(HttpServletRequest request) {
 		
@@ -40,6 +43,7 @@ public class OkexPrivateController {
 		}
 		return "ada trading start...";
 	}
+	
 	@RequestMapping("/Adatrade2")
 	public String getHistory(HttpServletRequest request) {
 		Map<String,String> map = null;
@@ -53,5 +57,20 @@ public class OkexPrivateController {
 		}
 		
 		return "okex_trade_v2 starting";
+	}
+	@RequestMapping("/exeGrid")
+	public String exeGrid(HttpServletRequest request) {
+		String reqMsg = null;
+		String currency = null;
+		String resp = null;
+		try {
+			reqMsg = HttpUtils.getMsg(request);
+			currency = JSONObject.parseObject(reqMsg).getString("currency");
+			okecGridService.execute(currency);
+		}catch(Exception e) {
+			log.error("执行异常",e);
+		}
+		
+		return resp;
 	}
 }

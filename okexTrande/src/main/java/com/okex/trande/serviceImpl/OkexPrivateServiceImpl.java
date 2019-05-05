@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.okex.trande.enums.OkexEnum;
@@ -106,7 +105,10 @@ public class OkexPrivateServiceImpl implements OkexPrivateServiceI{
 		try {
 			paramMap.put("api_key", APIKEY);
 			paramMap.put("sign", SignatureUtils.encrypt(paramMap, SECRETKEY));
+			
 			response = HttpClientUtil.postForm(url, paramMap, null, HttpClientUtil.CONNTIMEOUT, HttpClientUtil.READTIMEOUT);
+			
+			
 		} catch (Exception e) {
 			log.error(desc+"失败",e);
 			return null;

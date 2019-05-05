@@ -22,19 +22,20 @@ import lombok.extern.slf4j.Slf4j;
 @Service("okexPublicService")
 public class OkexPublicServiceImpl implements OkexPublicServiceI{
 	
-	private static String marketDepthUrl = "https://www.okb.com/api/v1/depth.do?symbol=";
-	private static String trandRecordUrl = "https://www.okb.com/api/v1/trades.do?symbol=";
+	private static String marketDepthUrl = "https://www.okex.me/api/spot/v3/instruments/%s/book";
+	private static String trandRecordUrl = "https://www.okex.me/api/spot/v3/instruments/%s/trades";
+	private static String tickerUrl = "https://www.okex.me/api/spot/v3/instruments/%s/ticker";
 	private static final String CHARSET = "utf-8";
 	/**
 	 * 获取交易ticker
 	 */
 	@Override
 	public String getTicker(String currency) {
-		String tickerUrl = "https://www.okb.com/api/v1/ticker.do?symbol=";
+		
 		if(StringUtils.isBlank(currency)) {
-			currency = "bch_btc";
+			currency = "bch-btc";
 		}
-		tickerUrl += currency; 
+		tickerUrl = String.format(tickerUrl, currency);
 		StringBuffer buffer = new StringBuffer("");
 		String tickerResp = null;
 		JSONObject obj = null;
@@ -54,7 +55,7 @@ public class OkexPublicServiceImpl implements OkexPublicServiceI{
 		if(StringUtils.isBlank(currency)) {
 			currency = "";
 		}
-		marketDepthUrl += currency;
+		marketDepthUrl = String.format(marketDepthUrl, currency);
 		String marketResp = null;
 		
 		try {
@@ -76,7 +77,7 @@ public class OkexPublicServiceImpl implements OkexPublicServiceI{
 		if(StringUtils.isBlank(currency)) {
 			currency = "bch_btc";
 		}
-		trandRecordUrl = trandRecordUrl+currency+"&since=7622718804";
+		trandRecordUrl = String.format(trandRecordUrl, currency);
 		try {
 			depthResp = HttpClientUtil.get(trandRecordUrl, CHARSET, HttpClientUtil.CONNTIMEOUT, HttpClientUtil.READTIMEOUT);
 		} catch (Exception e) {

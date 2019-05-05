@@ -105,6 +105,16 @@
 		    <artifactId>log4j</artifactId>
 		    <version>1.2.17</version>
 		</dependency>
+		<dependency>
+    		<groupId>com.itextpdf</groupId>
+   			<artifactId>layout</artifactId>
+    		<version>7.1.2</version>
+    	</dependency>
+    	<dependency>
+            <groupId>com.okcoin.commons</groupId>
+            <artifactId>okex-java-sdk-api</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 	</dependencies>
 
 	<build>
@@ -167,6 +177,9 @@
 			                        <directory>src/main/resources/config/${package.environment}</directory>
 			                        <filtering>false</filtering>
 			                    </resource>
+			                    <resource>
+    								<directory>src/main/resources/static</directory>
+								</resource>
 			                </resources>
 			            </configuration>
 			            <inherited></inherited>

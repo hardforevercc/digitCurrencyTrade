@@ -1,7 +1,7 @@
 package com.okex.trande.enums;
 
 public enum OkexEnum {
-	OKEXTRADE("8d8f9938-3e93-40b7-bb42-cedcbf49235a","D5E9619FE8646D4B3BDB90CC83B62CE7","查询api"),
+	OKEXTRADE("48c568ca-cddf-4403-aa40-b064a6885271","455DB684D0302CE19AB99D3C2CA269A4","交易api"),
 	OKEXQUERY("ca481c37-aa5f-48f4-864d-3728411b5a7c","3D913940E284DB838365567C7D04230B","交易api");
 	
 	private String api_key;
