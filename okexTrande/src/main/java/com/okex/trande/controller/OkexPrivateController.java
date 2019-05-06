@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.okex.trande.serviceI.OkecGridServiceI;
 import com.okex.trande.serviceI.OkexAdaMainFlowServiceI;
 import com.okex.trande.serviceI.OkexAdaMainFlowV2ServiceI;
+import com.okex.trande.serviceI.OkexGridLoopStatusServiceI;
 import com.okex.trande.serviceI.OkexPrivateServiceI;
 import com.okex.trande.utils.HttpUtils;
 
@@ -27,7 +28,7 @@ public class OkexPrivateController {
 	@Autowired
 	OkexAdaMainFlowV2ServiceI okexAdaMainFlowV2Service;
 	@Autowired OkecGridServiceI okecGridService;
-	
+	@Autowired OkexGridLoopStatusServiceI loopService;
 	
 	@RequestMapping("/getUserInfo")
 	public String getBalance(HttpServletRequest request) {
@@ -67,6 +68,22 @@ public class OkexPrivateController {
 			reqMsg = HttpUtils.getMsg(request);
 			currency = JSONObject.parseObject(reqMsg).getString("currency");
 			okecGridService.execute(currency);
+		}catch(Exception e) {
+			log.error("执行异常",e);
+		}
+		
+		return resp;
+	}
+	
+	@RequestMapping("/loopGrid")
+	public String loopGridService(HttpServletRequest request) {
+		String reqMsg = null;
+		String currency = null;
+		String resp = null;
+		try {
+			reqMsg = HttpUtils.getMsg(request);
+			currency = JSONObject.parseObject(reqMsg).getString("currency");
+			loopService.execute(currency);
 		}catch(Exception e) {
 			log.error("执行异常",e);
 		}

@@ -32,6 +32,7 @@ public class OkexConfig {
     public SpotProductAPIServiceImpl spotProductAPIService(APIConfiguration config) {
         return new SpotProductAPIServiceImpl(config);
     }
+	@Bean
 	public SpotOrderApiServiceImpl spotOrderApiService(APIConfiguration config) {
 		return new SpotOrderApiServiceImpl(config);
 	}

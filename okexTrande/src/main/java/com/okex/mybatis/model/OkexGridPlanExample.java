@@ -342,6 +342,76 @@ public class OkexGridPlanExample {
             return (Criteria) this;
         }
 
+        public Criteria andBuyorderidIsNull() {
+            addCriterion("buyOrderId is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyorderidIsNotNull() {
+            addCriterion("buyOrderId is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyorderidEqualTo(String value) {
+            addCriterion("buyOrderId =", value, "buyorderid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyorderidNotEqualTo(String value) {
+            addCriterion("buyOrderId <>", value, "buyorderid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyorderidGreaterThan(String value) {
+            addCriterion("buyOrderId >", value, "buyorderid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyorderidGreaterThanOrEqualTo(String value) {
+            addCriterion("buyOrderId >=", value, "buyorderid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyorderidLessThan(String value) {
+            addCriterion("buyOrderId <", value, "buyorderid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyorderidLessThanOrEqualTo(String value) {
+            addCriterion("buyOrderId <=", value, "buyorderid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyorderidLike(String value) {
+            addCriterion("buyOrderId like", value, "buyorderid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyorderidNotLike(String value) {
+            addCriterion("buyOrderId not like", value, "buyorderid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyorderidIn(List<String> values) {
+            addCriterion("buyOrderId in", values, "buyorderid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyorderidNotIn(List<String> values) {
+            addCriterion("buyOrderId not in", values, "buyorderid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyorderidBetween(String value1, String value2) {
+            addCriterion("buyOrderId between", value1, value2, "buyorderid");
+            return (Criteria) this;
+        }
+
+        public Criteria andBuyorderidNotBetween(String value1, String value2) {
+            addCriterion("buyOrderId not between", value1, value2, "buyorderid");
+            return (Criteria) this;
+        }
+
         public Criteria andSellidIsNull() {
             addCriterion("sellId is null");
             return (Criteria) this;
@@ -409,6 +479,76 @@ public class OkexGridPlanExample {
 
         public Criteria andSellidNotBetween(String value1, String value2) {
             addCriterion("sellId not between", value1, value2, "sellid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellorderidIsNull() {
+            addCriterion("sellOrderId is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellorderidIsNotNull() {
+            addCriterion("sellOrderId is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellorderidEqualTo(String value) {
+            addCriterion("sellOrderId =", value, "sellorderid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellorderidNotEqualTo(String value) {
+            addCriterion("sellOrderId <>", value, "sellorderid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellorderidGreaterThan(String value) {
+            addCriterion("sellOrderId >", value, "sellorderid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellorderidGreaterThanOrEqualTo(String value) {
+            addCriterion("sellOrderId >=", value, "sellorderid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellorderidLessThan(String value) {
+            addCriterion("sellOrderId <", value, "sellorderid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellorderidLessThanOrEqualTo(String value) {
+            addCriterion("sellOrderId <=", value, "sellorderid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellorderidLike(String value) {
+            addCriterion("sellOrderId like", value, "sellorderid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellorderidNotLike(String value) {
+            addCriterion("sellOrderId not like", value, "sellorderid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellorderidIn(List<String> values) {
+            addCriterion("sellOrderId in", values, "sellorderid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellorderidNotIn(List<String> values) {
+            addCriterion("sellOrderId not in", values, "sellorderid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellorderidBetween(String value1, String value2) {
+            addCriterion("sellOrderId between", value1, value2, "sellorderid");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellorderidNotBetween(String value1, String value2) {
+            addCriterion("sellOrderId not between", value1, value2, "sellorderid");
             return (Criteria) this;
         }
 

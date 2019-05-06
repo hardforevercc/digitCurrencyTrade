@@ -26,11 +26,25 @@ public class OkexGridPlan {
     private String buyid;
 
     /**
+     * OKEX订单号
+     * 表 : okex_grid_plan
+     * 对应字段 : buyOrderId
+     */
+    private String buyorderid;
+
+    /**
      * 卖出ID
      * 表 : okex_grid_plan
      * 对应字段 : sellId
      */
     private String sellid;
+
+    /**
+     * OKEX订单号
+     * 表 : okex_grid_plan
+     * 对应字段 : sellOrderId
+     */
+    private String sellorderid;
 
     /**
      * 预期买入价格
@@ -176,6 +190,24 @@ public class OkexGridPlan {
     /**
      * get method 
      *
+     * @return okex_grid_plan.buyOrderId：OKEX订单号
+     */
+    public String getBuyorderid() {
+        return buyorderid;
+    }
+
+    /**
+     * set method 
+     *
+     * @param buyorderid  OKEX订单号
+     */
+    public void setBuyorderid(String buyorderid) {
+        this.buyorderid = buyorderid == null ? null : buyorderid.trim();
+    }
+
+    /**
+     * get method 
+     *
      * @return okex_grid_plan.sellId：卖出ID
      */
     public String getSellid() {
@@ -189,6 +221,24 @@ public class OkexGridPlan {
      */
     public void setSellid(String sellid) {
         this.sellid = sellid == null ? null : sellid.trim();
+    }
+
+    /**
+     * get method 
+     *
+     * @return okex_grid_plan.sellOrderId：OKEX订单号
+     */
+    public String getSellorderid() {
+        return sellorderid;
+    }
+
+    /**
+     * set method 
+     *
+     * @param sellorderid  OKEX订单号
+     */
+    public void setSellorderid(String sellorderid) {
+        this.sellorderid = sellorderid == null ? null : sellorderid.trim();
     }
 
     /**

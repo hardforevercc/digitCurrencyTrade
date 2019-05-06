@@ -39,11 +39,11 @@
   <!-- gridPlan批量插入 -->
   <insert id="insertGridPlanList" useGeneratedKeys="true" keyProperty="id">
   	insert into okex_Grid_Plan (currency, buyPrice, sellPrice, amount,buyAmt,
-  	buyId,sellId,buySts,sellSts) values
+  	buyId,sellId,buySts,sellSts,create_date,update_date) values
   		<foreach item="item" collection="list" separator=",">
     		(#{item.currency}, #{item.buyprice}, #{item.sellprice}, #{item.amount},
-    		#{item.buyamt},
-    		#{item.buyid},#{item.sellid},#{item.buysts},#{item.sellsts})
+    		#{item.buyamt},#{item.buyid},#{item.sellid},#{item.buysts},#{item.sellsts},
+    		#{item.createDate},#{item.updateDate})
   		</foreach>
   </insert>
   
