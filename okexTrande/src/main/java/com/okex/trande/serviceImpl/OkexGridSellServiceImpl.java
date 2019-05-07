@@ -1,12 +1,14 @@
 package com.okex.trande.serviceImpl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.okcoin.commons.okex.open.api.bean.spot.param.PlaceOrderParam;
 import com.okcoin.commons.okex.open.api.bean.spot.result.OrderResult;
 import com.okcoin.commons.okex.open.api.service.spot.SpotOrderAPIServive;
@@ -26,16 +28,19 @@ public class OkexGridSellServiceImpl implements OkexGridSellServiceI {
 	@Override
 	public void execute(String currency) {
 		//获取买入状态为完全成交的订单
+		String[] sellArr = {null,"-1"};
+		List<String> list =  Arrays.asList(sellArr);
 		OkexGridPlanExample sellExample = new OkexGridPlanExample();
-		sellExample.createCriteria().andBuystsEqualTo("filled").andSellorderidIsNull()
+		sellExample.createCriteria().andBuystsEqualTo("filled").andSellidNotIn(list)
 		.andCurrencyEqualTo(currency);
 		List<PlaceOrderParam> sellList = exeSell(planMapper,sellExample);
 		if(null == sellList) {
 			return;
 		}
+		log.info("卖单执行结果为:"+JSONObject.toJSONString(sellList));
 		Map<String, List<OrderResult>> resultMap =  spotOrderApiService.addOrders(sellList);
 		List<OrderResult> OrderResultList = resultMap.get(currency.replaceAll("-", "_").toLowerCase());
-		
+		log.info("卖单执行结果为:"+JSONObject.toJSONString(OrderResultList));
 		OkexGridPlan plan = new OkexGridPlan();
 		OkexGridPlanExample planExa = new OkexGridPlanExample();
 		for(OrderResult result:OrderResultList) {

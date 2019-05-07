@@ -41,11 +41,11 @@ public class OkecGridServiceImpl implements OkecGridServiceI {
 	@Autowired SpotProductAPIService spotProductAPIService;
 	@Autowired SpotOrderAPIServive spotOrderApiService;
 	
-	private static BigDecimal buyPrice,sellPrice,amount,buyAmt,totalAmt;
+	private static BigDecimal buyPrice,sellPrice,amount,buyAmt,totalAmt,configAmt;
 	private static double x = 0.00;
 	private static int n = 0;
 	private final static int ROUND_DOWN = BigDecimal.ROUND_HALF_DOWN;
-	private static String nowDate = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+	//private static String nowDate = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
 	@Override
 	public void execute(String currency) {
 		
@@ -54,6 +54,7 @@ public class OkecGridServiceImpl implements OkecGridServiceI {
 			OkexGridConfig config = extMapper.selectOneGridConfig(currency);
 			n = GridCalcUtils.getN(config.getX(), config.getY());
 			x = config.getX();
+			configAmt = config.getTotalamt();
 			log.info("x = "+config.getX()+",y = "+ config.getY());
 		}catch(Exception e) {
 			log.error("获取"+currency+"grid配置信息失败",e);
@@ -71,11 +72,18 @@ public class OkecGridServiceImpl implements OkecGridServiceI {
 		//获取可用余额
 		try {
 			Account balanceStr = spotAccountAPIService.getAccountByCurrency("USDT");
-			totalAmt = new BigDecimal(balanceStr.getBalance()).setScale(4);
+			totalAmt = new BigDecimal(balanceStr.getBalance());
 			if(totalAmt.compareTo(BigDecimal.ZERO) <= 0) {
 				log.info("账户可交易金额为0,无法生成执行计划");
 				return;
 			}
+			//若配置金额不为空且配置金额<余额 则使用配置金额作为总金额
+			if(null != configAmt && configAmt.compareTo(BigDecimal.ZERO) >0) {
+				if(configAmt.compareTo(totalAmt) < 0) {
+					totalAmt = configAmt;
+				}
+			}
+			totalAmt = totalAmt.setScale(4);
 		}catch(Exception e) {
 			log.error("获取账户可用余额失败",e);
 			return;
@@ -87,6 +95,7 @@ public class OkecGridServiceImpl implements OkecGridServiceI {
 			extMapper.insertGridPlanList(gridPlanList);
 		}catch(Exception e) {
 			log.error("执行GridPlan数据入库异常",e);
+			return;
 		}	
 		log.info(new Date()+currency+"网格交易计划表生成完成");
 		log.info(new Date()+currency+"网格交易开始执行批量下单操作");
@@ -128,7 +137,7 @@ public class OkecGridServiceImpl implements OkecGridServiceI {
 	private static List<OkexGridPlan> createGridPlan(String currency){
 		List<OkexGridPlan> gridPlan = new ArrayList<OkexGridPlan>();
 		OkexGridPlan grid = null;
-		String currencyType = currency.replaceAll("_", "");
+		String currencyType = currency.replaceAll("-", "");
 		try {
 			int tmp = n;
 			Date currDate = new Date();
@@ -149,8 +158,8 @@ public class OkecGridServiceImpl implements OkecGridServiceI {
 				grid.setAmount(amount.intValue());
 				grid.setBuyamt(buyAmt);
 				grid.setCurrency(currency);
-				grid.setBuyid(currencyType+nowDate+i+"b");
-				grid.setSellid(currencyType+nowDate+i+"s");
+				grid.setBuyid(currencyType+newDate()+i+"b");
+				grid.setSellid(currencyType+newDate()+i+"s");
 				grid.setBuysts("00");
 				grid.setSellsts("00");
 				grid.setCreateDate(currDate);
@@ -185,5 +194,8 @@ public class OkecGridServiceImpl implements OkecGridServiceI {
 		log.info("orderList:"+JSONObject.toJSONString(orderList));
 		return orderList;
 	}
-
+	
+	private static String newDate() {
+		return new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+	}
 }
