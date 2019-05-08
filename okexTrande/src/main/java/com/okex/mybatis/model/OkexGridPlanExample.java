@@ -682,52 +682,52 @@ public class OkexGridPlanExample {
             return (Criteria) this;
         }
 
-        public Criteria andAmountEqualTo(Integer value) {
+        public Criteria andAmountEqualTo(BigDecimal value) {
             addCriterion("amount =", value, "amount");
             return (Criteria) this;
         }
 
-        public Criteria andAmountNotEqualTo(Integer value) {
+        public Criteria andAmountNotEqualTo(BigDecimal value) {
             addCriterion("amount <>", value, "amount");
             return (Criteria) this;
         }
 
-        public Criteria andAmountGreaterThan(Integer value) {
+        public Criteria andAmountGreaterThan(BigDecimal value) {
             addCriterion("amount >", value, "amount");
             return (Criteria) this;
         }
 
-        public Criteria andAmountGreaterThanOrEqualTo(Integer value) {
+        public Criteria andAmountGreaterThanOrEqualTo(BigDecimal value) {
             addCriterion("amount >=", value, "amount");
             return (Criteria) this;
         }
 
-        public Criteria andAmountLessThan(Integer value) {
+        public Criteria andAmountLessThan(BigDecimal value) {
             addCriterion("amount <", value, "amount");
             return (Criteria) this;
         }
 
-        public Criteria andAmountLessThanOrEqualTo(Integer value) {
+        public Criteria andAmountLessThanOrEqualTo(BigDecimal value) {
             addCriterion("amount <=", value, "amount");
             return (Criteria) this;
         }
 
-        public Criteria andAmountIn(List<Integer> values) {
+        public Criteria andAmountIn(List<BigDecimal> values) {
             addCriterion("amount in", values, "amount");
             return (Criteria) this;
         }
 
-        public Criteria andAmountNotIn(List<Integer> values) {
+        public Criteria andAmountNotIn(List<BigDecimal> values) {
             addCriterion("amount not in", values, "amount");
             return (Criteria) this;
         }
 
-        public Criteria andAmountBetween(Integer value1, Integer value2) {
+        public Criteria andAmountBetween(BigDecimal value1, BigDecimal value2) {
             addCriterion("amount between", value1, value2, "amount");
             return (Criteria) this;
         }
 
-        public Criteria andAmountNotBetween(Integer value1, Integer value2) {
+        public Criteria andAmountNotBetween(BigDecimal value1, BigDecimal value2) {
             addCriterion("amount not between", value1, value2, "amount");
             return (Criteria) this;
         }

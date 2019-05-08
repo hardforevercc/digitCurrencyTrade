@@ -65,7 +65,7 @@ public class OkexGridPlan {
      * 表 : okex_grid_plan
      * 对应字段 : amount
      */
-    private Integer amount;
+    private BigDecimal amount;
 
     /**
      * 买入总金额
@@ -282,7 +282,7 @@ public class OkexGridPlan {
      *
      * @return okex_grid_plan.amount：预期买入数量
      */
-    public Integer getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
@@ -291,7 +291,7 @@ public class OkexGridPlan {
      *
      * @param amount  预期买入数量
      */
-    public void setAmount(Integer amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 

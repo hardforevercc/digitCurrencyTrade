@@ -1,7 +1,6 @@
 package com.okex.trande.serviceImpl;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,6 +25,7 @@ import com.okex.mybatis.model.OkexGridPlanExample;
 import com.okex.trande.serviceI.OkecGridServiceI;
 import com.okex.trande.serviceI.OkexPrivateServiceI;
 import com.okex.trande.serviceI.OkexPublicServiceI;
+import com.okex.trande.utils.CommonUtils;
 import com.okex.trande.utils.GridCalcUtils;
 
 import lombok.extern.slf4j.Slf4j;
@@ -155,11 +155,11 @@ public class OkecGridServiceImpl implements OkecGridServiceI {
 				grid = new OkexGridPlan();
 				grid.setBuyprice(buyPrice);
 				grid.setSellprice(sellPrice);
-				grid.setAmount(amount.intValue());
+				grid.setAmount(amount);
 				grid.setBuyamt(buyAmt);
 				grid.setCurrency(currency);
-				grid.setBuyid(currencyType+newDate()+i+"b");
-				grid.setSellid(currencyType+newDate()+i+"s");
+				grid.setBuyid(currencyType+CommonUtils.getTime()+i+"b");
+				grid.setSellid(currencyType+CommonUtils.getTime()+i+"s");
 				grid.setBuysts("00");
 				grid.setSellsts("00");
 				grid.setCreateDate(currDate);
@@ -195,7 +195,5 @@ public class OkecGridServiceImpl implements OkecGridServiceI {
 		return orderList;
 	}
 	
-	private static String newDate() {
-		return new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-	}
+	
 }
