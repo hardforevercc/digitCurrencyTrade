@@ -24,7 +24,7 @@ import com.okex.trande.utils.OkexTradeUtils;
 
 import lombok.extern.slf4j.Slf4j;
 @Slf4j
-@Service("okexAdaMainFlowV2ServiceI")
+@Service("okexAdaMainFlowV2Service")
 public class OkexAdaMainFlowV2ServiceImpl implements OkexAdaMainFlowV2ServiceI{
 	private static final String BTC_USDT = "btc_usdt";
 	private static final String ADA_USDT = "ada_usdt";
