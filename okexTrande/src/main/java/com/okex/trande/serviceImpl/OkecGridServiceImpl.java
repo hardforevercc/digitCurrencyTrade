@@ -50,20 +50,11 @@ public class OkecGridServiceImpl implements OkecGridServiceI {
 	public void execute(String currency) {
 		
 		log.info(new Date()+currency+"网格交易执行开始");
-		try {
-			OkexGridConfig config = extMapper.selectOneGridConfig(currency);
-			n = GridCalcUtils.getN(config.getX(), config.getY());
-			x = config.getX();
-			configAmt = config.getTotalamt();
-			log.info("x = "+config.getX()+",y = "+ config.getY());
-		}catch(Exception e) {
-			log.error("获取"+currency+"grid配置信息失败",e);
-		}
+		init(currency);
 		log.info(new Date()+currency+"交易策略分为"+n+"段执行");
 		//获取买一价
 		try {
-			com.okcoin.commons.okex.open.api.bean.spot.result.Ticker ticker = spotProductAPIService.getTickerByProductId(currency);
-					
+			com.okcoin.commons.okex.open.api.bean.spot.result.Ticker ticker = spotProductAPIService.getTickerByProductId(currency);		
 			buyPrice = new BigDecimal(ticker.getBest_bid());
 		}catch(Exception e) {
 			log.error("获取"+currency+"买一价失败",e);
@@ -193,6 +184,20 @@ public class OkecGridServiceImpl implements OkecGridServiceI {
 		}
 		log.info("orderList:"+JSONObject.toJSONString(orderList));
 		return orderList;
+	}
+
+	
+	private void init(String currency) {
+		try {
+			OkexGridConfig config = extMapper.selectOneGridConfig(currency);
+			n = GridCalcUtils.getN(config.getX(), config.getY());
+			x = config.getX();
+			configAmt = config.getTotalamt();
+			log.info("x = "+config.getX()+",y = "+ config.getY());
+		}catch(Exception e) {
+			log.error("获取"+currency+"grid配置信息失败",e);
+		}
+		
 	}
 	
 	
