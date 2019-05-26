@@ -1,5 +1,6 @@
 package com.okex.trande.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -9,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
+import com.okcoin.commons.okex.open.api.bean.spot.result.OrderInfo;
+import com.okcoin.commons.okex.open.api.service.spot.SpotOrderAPIServive;
 import com.okex.trande.serviceI.OkecGridServiceI;
 import com.okex.trande.serviceI.OkexAdaMainFlowServiceI;
 import com.okex.trande.serviceI.OkexAdaMainFlowV2ServiceI;
@@ -31,6 +34,7 @@ public class OkexPrivateController {
 	@Autowired OkecGridServiceI okecGridService;
 	@Autowired OkexGridLoopStatusServiceI loopService;
 	@Autowired OkexGridByDayServiceI gridByDayService;
+	@Autowired SpotOrderAPIServive spotOrderApiService;
 	
 	@RequestMapping("/getUserInfo")
 	public String getBalance(HttpServletRequest request) {
@@ -102,6 +106,24 @@ public class OkexPrivateController {
 			reqMsg = HttpUtils.getMsg(request);
 			currency = JSONObject.parseObject(reqMsg).getString("currency");
 			gridByDayService.execute(currency);
+		}catch(Exception e) {
+			log.error("执行异常",e);
+		}
+		
+		return resp;
+	}
+	
+	@RequestMapping("/getList")
+	public String getOrderList(HttpServletRequest request) {
+		String reqMsg = null;
+		String currency = null;
+		String resp = null;
+		try {
+			reqMsg = HttpUtils.getMsg(request);
+			currency = JSONObject.parseObject(reqMsg).getString("currency");
+			//List<OrderInfo> orderInfoList = spotOrderApiService.getOrders(currency, null, null, null, null);
+			OrderInfo order = spotOrderApiService.getOrderByOrderId(currency, "2889998928784384");
+			resp = JSONObject.toJSONString(order);
 		}catch(Exception e) {
 			log.error("执行异常",e);
 		}

@@ -2,17 +2,15 @@ package com.okex.trande.serviceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.okcoin.commons.okex.open.api.bean.spot.param.OrderParamDto;
-import com.okcoin.commons.okex.open.api.bean.spot.param.PlaceOrderParam;
 import com.okcoin.commons.okex.open.api.bean.spot.result.OrderInfo;
-import com.okcoin.commons.okex.open.api.bean.spot.result.OrderResult;
 import com.okcoin.commons.okex.open.api.service.spot.SpotOrderAPIServive;
+import com.okex.mybatis.dao.OkexExtMapper;
 import com.okex.mybatis.dao.OkexGridPlanMapper;
 import com.okex.mybatis.model.OkexGridPlan;
 import com.okex.mybatis.model.OkexGridPlanExample;
@@ -25,6 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 public class OkexCancelOrderServiceImpl implements OkexCancelOrderServiceI {
 	@Autowired OkexGridPlanMapper gridPlanMapper;
 	@Autowired SpotOrderAPIServive spotOrderApiService;
+	@Autowired OkexExtMapper extMapper;
 	
 	@Override
 	public void batchCancel(String currency) {
@@ -57,25 +56,23 @@ public class OkexCancelOrderServiceImpl implements OkexCancelOrderServiceI {
 		log.info("撤销订单执行完毕");
 		List<OrderInfo> orderInfoList = null;
 		try {
-			orderInfoList = spotOrderApiService.getOrders(currency, "cancel", null, null, null);
-			OkexGridPlan plan = null;
-			OkexGridPlanExample planExa = null;
-			for(OrderInfo orderInfo:orderInfoList) {
-				orderInfo.getOrder_id();
-				orderInfo.getStatus();
-				plan = new OkexGridPlan();
-				planExa = new OkexGridPlanExample();
-				plan.setBuyorderid(orderInfo.getOrder_id().toString());
-				plan.setBuysts("open");//买入交易状态更新为交易中
-				planExa.createCriteria().andBuyorderidEqualTo(orderInfo.getOrder_id().toString());
-				gridPlanMapper.updateByExampleSelective(plan, planExa);
+			orderInfoList = spotOrderApiService.getOrders(currency, "cancelled", null, null, null);
 			
+			log.info(JSONObject.toJSONString(orderInfoList));
+	
+			for(OrderInfo orderInfo:orderInfoList) {
+				if(!"-1".equals(orderInfo)) {
+					orderInfo.getOrder_id();
+					orderInfo.getStatus();
+					extMapper.upateTo9999(orderInfo.getClient_oid());
+				}
+				
 			}
 		}catch(Exception e) {
 			log.error("更新撤销买入状态为open,卖出状态为00订单异常",e);
 		}
 		
-		log.info(JSONObject.toJSONString(orderInfoList));
+		
 	}
 	
 	public void pageCancer(List<Long> orderIdList,String currency) {
@@ -95,7 +92,8 @@ public class OkexCancelOrderServiceImpl implements OkexCancelOrderServiceI {
 			orderParam.setInstrument_id(currency.toLowerCase());
 			orderParam.setOrder_ids(orderSubList);
 			orderParamList.add(orderParam);
-			spotOrderApiService.cancleOrders(orderParamList);
+			//
 		}
+		spotOrderApiService.cancleOrders(orderParamList);
 	}
 }

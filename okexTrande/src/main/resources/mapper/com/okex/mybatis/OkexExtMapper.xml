@@ -35,6 +35,17 @@
 	    from okex_grid_config
 	    where currency = #{currency}
   </select>
+  <select id="selectLeftPlan"  resultType="java.lang.Integer">
+	    select 
+	    count(1)
+	    from okex_grid_plan
+	    where currency = #{currency} and buysts = 'filled'
+  </select>
+  
+  <update id="upateTo9999" parameterType="String">
+  	UPDATE okex_grid_plan SET buySts = '9999' , sellSts = '9999' 
+  	WHERE buyId = #{orderId} OR sellId = #{orderId};
+  </update>
   
   <!-- gridPlan批量插入 -->
   <insert id="insertGridPlanList" useGeneratedKeys="true" keyProperty="id">

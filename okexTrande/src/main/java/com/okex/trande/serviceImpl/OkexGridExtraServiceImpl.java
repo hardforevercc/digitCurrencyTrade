@@ -10,13 +10,17 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONObject;
 import com.okcoin.commons.okex.open.api.bean.spot.param.PlaceOrderParam;
 import com.okcoin.commons.okex.open.api.bean.spot.result.OrderResult;
+import com.okcoin.commons.okex.open.api.bean.spot.result.Ticker;
 import com.okcoin.commons.okex.open.api.service.spot.SpotOrderAPIServive;
 import com.okcoin.commons.okex.open.api.service.spot.SpotProductAPIService;
+import com.okex.mybatis.dao.OkexExtMapper;
 import com.okex.mybatis.dao.OkexGridPlanMapper;
+import com.okex.mybatis.model.OkexGridConfig;
 import com.okex.mybatis.model.OkexGridPlan;
 import com.okex.mybatis.model.OkexGridPlanExample;
 import com.okex.trande.serviceI.OkexGridExtraServiceI;
 import com.okex.trande.utils.CommonUtils;
+import com.okex.trande.utils.GridCalcUtils;
 
 import lombok.extern.slf4j.Slf4j;
 /**
@@ -30,58 +34,73 @@ public class OkexGridExtraServiceImpl implements OkexGridExtraServiceI {
 	@Autowired OkexGridPlanMapper gridPlanMapper;
 	@Autowired SpotProductAPIService spotProductAPIService;
 	@Autowired SpotOrderAPIServive spotOrderApiService;
-	
+	@Autowired OkexExtMapper extMapper;
 	private static int DOWN = BigDecimal.ROUND_DOWN;
 	private static BigDecimal buyPrice,buyAmount;
+	private static double x = 0.00;
 	@Override
 	public void execute(String currency) {
 		BigDecimal buyOnePrice = null;
-		
+		PlaceOrderParam orderParam = null;
+		OkexGridPlan plan = null;
+		OkexGridPlanExample planExam = null;
+		List<OkexGridPlan> planGridList = null;
 		try {
-			OkexGridPlanExample planExam = new OkexGridPlanExample();
+			planExam = new OkexGridPlanExample();
 			planExam.createCriteria().andBuystsEqualTo("filled").
-			andSellstsEqualTo("filled").andCurrencyEqualTo(currency);
+			andSellstsEqualTo("filled").andCurrencyEqualTo(currency);	
+			planGridList = gridPlanMapper.selectByExample(planExam);
 			
-			List<OkexGridPlan> planGridList = gridPlanMapper.selectByExample(planExam);
-			PlaceOrderParam orderParam = null;
-			OkexGridPlan plan = null;
 			if(planGridList == null || planGridList.size() <0) {
 				log.info("无成交交易,不执行补充计划");
 				return;
 			}
+		}catch(Exception e) {
+			log.error("查询交易失败",e);
+			return;
+		}
+		try {
+			init(currency);
+		}catch(Exception e) {
+			log.error("初始化参数失败",e);
+			return;
+		}
+			
+		try {	
+			Ticker ticker = spotProductAPIService.getTickerByProductId(currency);		
+			buyOnePrice = new BigDecimal(ticker.getBest_bid());
 			for(OkexGridPlan gridPlan:planGridList) {
-				
-				if(null != buyOnePrice && currency.equals(gridPlan.getCurrency())) {
-					buyOnePrice = buyOnePrice.multiply(BigDecimal.ONE.
-							subtract(new BigDecimal("0.02")));
-				}else {
-					//获取买一价
-					buyOnePrice = new BigDecimal(spotProductAPIService.
-							getTickerByProductId(gridPlan.getCurrency()).getBest_bid());
-				}
-				
 				plan = packGridPlan(gridPlan,buyOnePrice);			
 				orderParam = packBuyParam(plan);
 				log.info("执行计划订单:"+JSONObject.toJSONString(orderParam));
 				OrderResult result = spotOrderApiService.addOrder(orderParam);
 				if("-1".equals(result.getOrder_id().toString())) {
 					log.info("交易失败: "+result.getClient_oid());
-					return;
+					continue;
 				}
 				plan.setBuyid(result.getOrder_id().toString());
 				plan.setBuysts("open");
 				gridPlanMapper.insert(plan);
-				
+				planExam.clear();
+				planExam.createCriteria().andBuyidEqualTo(gridPlan.getBuyid());
+				gridPlan.setBuysts("9999");
+				gridPlan.setSellsts("9999");
+				gridPlanMapper.updateByExampleSelective(gridPlan, planExam);
 			}
 		}catch(Exception e) {
 			log.error("额外补充网格交易执行异常",e);
 		}
-		
-
 	}
+	private void init(String currency) throws Exception {
+		
+		OkexGridConfig config = extMapper.selectOneGridConfig(currency);
+		x = config.getX();
+	
+	}
+	
 	private static OkexGridPlan packGridPlan(OkexGridPlan gridPlan,BigDecimal buyOnePrice) {
 		OkexGridPlan plan = new OkexGridPlan();
-		buyPrice = buyOnePrice.multiply(BigDecimal.ONE.subtract(BigDecimal.valueOf(0.005)));
+		buyPrice = buyOnePrice.multiply(BigDecimal.ONE.subtract(BigDecimal.valueOf(x)));
 		buyAmount = gridPlan.getActbuyprice().divide(buyPrice,BigDecimal.ROUND_DOWN).setScale(4, DOWN);
 		String currencyType  = gridPlan.getCurrency().replaceAll("-", "");
 		plan.setBuyprice(buyPrice);
@@ -89,7 +108,7 @@ public class OkexGridExtraServiceImpl implements OkexGridExtraServiceI {
 		plan.setBuyid(currencyType+CommonUtils.getTime()+"b");
 		plan.setBuysts("00");
 		plan.setCreateDate(new Date());
-		plan.setSellprice(buyOnePrice.multiply(BigDecimal.ONE.add(BigDecimal.valueOf(0.01))));
+		plan.setSellprice(buyOnePrice.multiply(BigDecimal.ONE.add(BigDecimal.valueOf(x))));
 		plan.setSellid(currencyType+CommonUtils.getTime()+"s");
 		plan.setSellsts("00");
 		return plan;

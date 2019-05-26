@@ -28,10 +28,9 @@ public class OkexGridSellServiceImpl implements OkexGridSellServiceI {
 	@Override
 	public void execute(String currency) {
 		//获取买入状态为完全成交的订单
-		String[] sellArr = {null,"-1"};
-		List<String> list =  Arrays.asList(sellArr);
+		log.info("执行卖出交易币种: "+currency);
 		OkexGridPlanExample sellExample = new OkexGridPlanExample();
-		sellExample.createCriteria().andBuystsEqualTo("filled").andSellidNotIn(list)
+		sellExample.createCriteria().andBuystsEqualTo("filled").andSellstsEqualTo("00")
 		.andCurrencyEqualTo(currency);
 		List<PlaceOrderParam> sellList = exeSell(planMapper,sellExample);
 		if(null == sellList) {
@@ -39,12 +38,14 @@ public class OkexGridSellServiceImpl implements OkexGridSellServiceI {
 		}
 		log.info("卖单执行结果为:"+JSONObject.toJSONString(sellList));
 		Map<String, List<OrderResult>> resultMap =  spotOrderApiService.addOrders(sellList);
-		List<OrderResult> OrderResultList = resultMap.get(currency.replaceAll("-", "_").toLowerCase());
+		//okex 返回报文变更.replaceAll("-", "_")
+		List<OrderResult> OrderResultList = resultMap.get(currency.toLowerCase());
 		log.info("卖单执行结果为:"+JSONObject.toJSONString(OrderResultList));
 		OkexGridPlan plan = new OkexGridPlan();
 		OkexGridPlanExample planExa = new OkexGridPlanExample();
 		for(OrderResult result:OrderResultList) {
 			plan.setSellorderid(result.getOrder_id().toString());
+			plan.setSellsts("open");
 			planExa.createCriteria().andSellidEqualTo(result.getClient_oid());
 			planMapper.updateByExampleSelective(plan, planExa);
 		}
@@ -62,6 +63,7 @@ public class OkexGridSellServiceImpl implements OkexGridSellServiceI {
 			log.info("查询可卖出订单数量为:"+gridPlanList.size());
 			//封装委托卖出订单
 			for(OkexGridPlan grid:gridPlanList) {
+				log.info("执行卖出订单:"+ grid.getSellid());
 				orderParam = new PlaceOrderParam();
 				orderParam.setClient_oid(grid.getSellid());
 				orderParam.setType("limit");

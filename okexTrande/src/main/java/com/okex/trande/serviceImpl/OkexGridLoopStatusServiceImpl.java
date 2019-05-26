@@ -24,6 +24,7 @@ public class OkexGridLoopStatusServiceImpl implements OkexGridLoopStatusServiceI
 	public void execute(String currency) {
 		while(true) {
 			try {
+				
 				okexGridByDayService.queryDealSts(currency, "filled");
 				log.info("更新订单状态完毕,执行卖出操作开始");
 				okexGridSellService.execute(currency);
@@ -42,6 +43,11 @@ public class OkexGridLoopStatusServiceImpl implements OkexGridLoopStatusServiceI
 			}
 			log.info("当前交易执行完毕");
 		}
+		
+	}
+	@Override
+	public void updateN9999Order(String currency) {
+		
 		
 	}
 

@@ -23,6 +23,7 @@ import com.okex.mybatis.model.OkexGridConfig;
 import com.okex.mybatis.model.OkexGridPlan;
 import com.okex.mybatis.model.OkexGridPlanExample;
 import com.okex.trande.serviceI.OkecGridServiceI;
+import com.okex.trande.serviceI.OkexCancelOrderServiceI;
 import com.okex.trande.serviceI.OkexPrivateServiceI;
 import com.okex.trande.serviceI.OkexPublicServiceI;
 import com.okex.trande.utils.CommonUtils;
@@ -40,6 +41,7 @@ public class OkecGridServiceImpl implements OkecGridServiceI {
 	@Autowired SpotAccountAPIService spotAccountAPIService;
 	@Autowired SpotProductAPIService spotProductAPIService;
 	@Autowired SpotOrderAPIServive spotOrderApiService;
+	@Autowired OkexCancelOrderServiceI cancelOrderService;
 	
 	private static BigDecimal buyPrice,sellPrice,amount,buyAmt,totalAmt,configAmt;
 	private static double x = 0.00;
@@ -50,6 +52,8 @@ public class OkecGridServiceImpl implements OkecGridServiceI {
 	public void execute(String currency) {
 		
 		log.info(new Date()+currency+"网格交易执行开始");
+		log.info(new Date()+currency+"撤销昨日订单");
+		cancelOrderService.batchCancel(currency);
 		init(currency);
 		log.info(new Date()+currency+"交易策略分为"+n+"段执行");
 		//获取买一价
@@ -74,7 +78,7 @@ public class OkecGridServiceImpl implements OkecGridServiceI {
 					totalAmt = configAmt;
 				}
 			}
-			totalAmt = totalAmt.setScale(4);
+			totalAmt = totalAmt.setScale(4,ROUND_DOWN);
 		}catch(Exception e) {
 			log.error("获取账户可用余额失败",e);
 			return;
@@ -104,8 +108,8 @@ public class OkecGridServiceImpl implements OkecGridServiceI {
 				List<PlaceOrderParam> orderSubList = orderList.subList(begNum, endNum);				
 				Map<String, List<OrderResult>> resultMap =  spotOrderApiService.addOrders(orderSubList);
 				log.info("resultMap:"+JSONObject.toJSONString(resultMap));
-				//返回币值对为: ada_usdt
-				List<OrderResult> OrderResultList = resultMap.get(currency.replaceAll("-", "_").toLowerCase());
+				//返回币值对为: ada_usdt .replaceAll("-", "_")
+				List<OrderResult> OrderResultList = resultMap.get(currency.toLowerCase());
 				OkexGridPlan plan = null;
 				OkexGridPlanExample planExa = null;
 				for(OrderResult result:OrderResultList) {
@@ -194,6 +198,8 @@ public class OkecGridServiceImpl implements OkecGridServiceI {
 			x = config.getX();
 			configAmt = config.getTotalamt();
 			log.info("x = "+config.getX()+",y = "+ config.getY());
+			int filledNum = extMapper.selectLeftPlan(currency);
+			n = n-filledNum;
 		}catch(Exception e) {
 			log.error("获取"+currency+"grid配置信息失败",e);
 		}
