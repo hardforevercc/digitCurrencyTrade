@@ -67,7 +67,7 @@ public class OkecGridServiceImpl implements OkecGridServiceI {
 		//获取可用余额
 		try {
 			Account balanceStr = spotAccountAPIService.getAccountByCurrency("USDT");
-			totalAmt = new BigDecimal(balanceStr.getBalance());
+			totalAmt = new BigDecimal(balanceStr.getAvailable());
 			if(totalAmt.compareTo(BigDecimal.ZERO) <= 0) {
 				log.info("账户可交易金额为0,无法生成执行计划");
 				return;

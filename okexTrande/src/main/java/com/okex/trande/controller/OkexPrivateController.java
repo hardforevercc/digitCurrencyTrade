@@ -1,6 +1,5 @@
 package com.okex.trande.controller;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +14,7 @@ import com.okcoin.commons.okex.open.api.service.spot.SpotOrderAPIServive;
 import com.okex.trande.serviceI.OkecGridServiceI;
 import com.okex.trande.serviceI.OkexAdaMainFlowServiceI;
 import com.okex.trande.serviceI.OkexAdaMainFlowV2ServiceI;
+import com.okex.trande.serviceI.OkexCancelOrderServiceI;
 import com.okex.trande.serviceI.OkexGridByDayServiceI;
 import com.okex.trande.serviceI.OkexGridLoopStatusServiceI;
 import com.okex.trande.serviceI.OkexPrivateServiceI;
@@ -35,6 +35,7 @@ public class OkexPrivateController {
 	@Autowired OkexGridLoopStatusServiceI loopService;
 	@Autowired OkexGridByDayServiceI gridByDayService;
 	@Autowired SpotOrderAPIServive spotOrderApiService;
+	@Autowired OkexCancelOrderServiceI cancelOrderService;
 	
 	@RequestMapping("/getUserInfo")
 	public String getBalance(HttpServletRequest request) {
@@ -90,6 +91,21 @@ public class OkexPrivateController {
 			reqMsg = HttpUtils.getMsg(request);
 			currency = JSONObject.parseObject(reqMsg).getString("currency");
 			loopService.execute(currency);
+		}catch(Exception e) {
+			log.error("执行异常",e);
+		}
+		
+		return resp;
+	}
+	@RequestMapping("/cancelOrder")
+	public String cancelOrderService(HttpServletRequest request) {
+		String reqMsg = null;
+		String currency = null;
+		String resp = null;
+		try {
+			reqMsg = HttpUtils.getMsg(request);
+			currency = JSONObject.parseObject(reqMsg).getString("currency");
+			cancelOrderService.batchCancel(currency);
 		}catch(Exception e) {
 			log.error("执行异常",e);
 		}

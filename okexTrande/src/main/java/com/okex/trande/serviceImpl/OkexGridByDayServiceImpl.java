@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.alibaba.fastjson.JSONObject;
 import com.okcoin.commons.okex.open.api.bean.spot.result.OrderInfo;
 import com.okcoin.commons.okex.open.api.service.spot.SpotOrderAPIServive;
+import com.okex.mybatis.dao.OkexExtMapper;
 import com.okex.mybatis.dao.OkexGridPlanMapper;
 import com.okex.mybatis.model.OkexGridPlan;
 import com.okex.mybatis.model.OkexGridPlanExample;
@@ -23,6 +24,7 @@ public class OkexGridByDayServiceImpl implements OkexGridByDayServiceI {
 	@Autowired OkecGridServiceI gridSercice;
 	@Autowired SpotOrderAPIServive spotOrderApiService;
 	@Autowired OkexGridPlanMapper gridPlanMapper;
+	@Autowired OkexExtMapper extMapper;
 	private List<String> list;
 	
 	public OkexGridByDayServiceImpl() {
@@ -62,43 +64,36 @@ public class OkexGridByDayServiceImpl implements OkexGridByDayServiceI {
 			OkexGridPlan plan = null;
 			OkexGridPlanExample planExam = new OkexGridPlanExample();
 			
-			List<OkexGridPlan> databasePlan = null;
+			int filledNum = 0;
 			for(OrderInfo orderInfo : infoList) {
-				orderInfo.getStatus();
 				plan = new OkexGridPlan();
-				
-				if("buy".equals(orderInfo.getSide())) {
-					planExam.createCriteria().andBuyidEqualTo(orderInfo.getClient_oid())
-					.andBuystsNotEqualTo("9999").andSellstsNotEqualTo("9999");
-					databasePlan = gridPlanMapper.selectByExample(planExam);
-					if(databasePlan.size() > 0) {
+				filledNum = extMapper.selectBuyOrderNum(orderInfo.getClient_oid());
+				if(filledNum > 0) {
+					log.info("需要更新记录为:"+JSONObject.toJSONString(orderInfo));
+					if("buy".equals(orderInfo.getSide())) {
 						plan.setBuyorderid(orderInfo.getOrder_id().toString());
 						plan.setActbuyamount(new BigDecimal(orderInfo.getFilled_size()));
 						plan.setActbuyprice(new BigDecimal(orderInfo.getFilled_notional()));
 						plan.setBuysts(orderInfo.getStatus());
-						planExam.clear();
 						log.info("更新买入订单为:"+orderInfo.getOrder_id().toString());
 						planExam.createCriteria().andBuyidEqualTo(orderInfo.getClient_oid()).andBuystsNotIn(list);
 						gridPlanMapper.updateByExampleSelective(plan, planExam);
-					}		
+					}
 				}
-					
-				if("sell".equals(orderInfo.getSide())) {
-					planExam.createCriteria().andSellidEqualTo(orderInfo.getClient_oid())
-					.andBuystsNotEqualTo("9999").andSellstsNotEqualTo("9999");
-					databasePlan = gridPlanMapper.selectByExample(planExam);
-					if(databasePlan.size() > 1 ) {
+				filledNum = extMapper.selectSellOrderNum(orderInfo.getClient_oid());
+				if(filledNum > 0) {
+					log.info("需要更新卖出记录为:"+JSONObject.toJSONString(orderInfo));
+					if("sell".equals(orderInfo.getSide())) {
 						plan.setSellorderid(orderInfo.getOrder_id().toString());
 						plan.setActsellamount(new BigDecimal(orderInfo.getFilled_size()));
 						plan.setActsellprice(new BigDecimal(orderInfo.getFilled_notional()));
 						plan.setSellsts(orderInfo.getStatus());
-						planExam.clear();
 						log.info("更新卖出订单为:"+orderInfo.getOrder_id().toString());
-						planExam.createCriteria().andSellidEqualTo(orderInfo.getOrder_id().toString()).andSellstsNotIn(list);
+						planExam.createCriteria().andSellidEqualTo(orderInfo.getClient_oid().toString()).andSellstsNotIn(list);
 						gridPlanMapper.updateByExampleSelective(plan, planExam);
 					}
-					
 				}
+					
 							
 			}
 			log.info("更新订单状态完毕,执行卖出操作开始");

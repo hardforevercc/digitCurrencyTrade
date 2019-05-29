@@ -17,5 +17,8 @@ public interface OkexExtMapper {
 	OkexGridConfig selectOneGridConfig(String currency);
 	int insertGridPlanList(List<OkexGridPlan> gridList);
 	int selectLeftPlan(String currency);
-	int upateTo9999(@Param("orderId") String orderId);
+	int upateTo9999(@Param("orderId") String orderId,@Param("currency") String currency);
+	int selectBuyOrderNum(@Param("orderId") String orderId);
+	int selectSellOrderNum(@Param("orderId") String orderId);
+	double selectOnchangePercent(@Param("buyOnePrice") BigDecimal buyOnePrice,@Param("currency") String currency);
 }

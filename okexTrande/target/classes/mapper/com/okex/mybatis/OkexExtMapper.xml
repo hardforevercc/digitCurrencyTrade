@@ -58,10 +58,6 @@
   	sellId = #{orderId} and 
   	sellSts not in ('9999','filled');
   </select>
-  <select id="selectOnchangePercent" resultType="java.lang.Double">
-  	SELECT SUM(deal_percent) FROM okex_deal_change_config 
-  	WHERE deal_price >= #{buyOnePrice} and currency = #{currency}
-  </select>
   
   <!-- gridPlan批量插入 -->
   <insert id="insertGridPlanList" useGeneratedKeys="true" keyProperty="id">

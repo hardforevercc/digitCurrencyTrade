@@ -2,13 +2,17 @@ package com.okex.trande.serviceImpl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.okcoin.commons.okex.open.api.bean.spot.param.OrderParamDto;
+import com.okcoin.commons.okex.open.api.bean.spot.param.PlaceOrderParam;
+import com.okcoin.commons.okex.open.api.bean.spot.result.BatchOrdersResult;
 import com.okcoin.commons.okex.open.api.bean.spot.result.OrderInfo;
+import com.okcoin.commons.okex.open.api.bean.spot.result.OrderResult;
 import com.okcoin.commons.okex.open.api.service.spot.SpotOrderAPIServive;
 import com.okex.mybatis.dao.OkexExtMapper;
 import com.okex.mybatis.dao.OkexGridPlanMapper;
@@ -64,7 +68,7 @@ public class OkexCancelOrderServiceImpl implements OkexCancelOrderServiceI {
 				if(!"-1".equals(orderInfo)) {
 					orderInfo.getOrder_id();
 					orderInfo.getStatus();
-					extMapper.upateTo9999(orderInfo.getClient_oid());
+					extMapper.upateTo9999(orderInfo.getClient_oid(),currency);
 				}
 				
 			}
@@ -82,6 +86,7 @@ public class OkexCancelOrderServiceImpl implements OkexCancelOrderServiceI {
 		int begNum = 0;
 		int endNum = 0;
 		if(orderIdList.size()%10 > 0) { num = orderIdList.size()/10 + 1;}
+		Map<String, BatchOrdersResult> resultMap = null;
 		for(int i = 0;i < num;i++) {
 			begNum = i*10;
 			endNum = (i+1)*10;
@@ -92,8 +97,29 @@ public class OkexCancelOrderServiceImpl implements OkexCancelOrderServiceI {
 			orderParam.setInstrument_id(currency.toLowerCase());
 			orderParam.setOrder_ids(orderSubList);
 			orderParamList.add(orderParam);
+			log.info("批量撤单请求数据为:"+JSONObject.toJSONString(orderParamList));
+			resultMap = spotOrderApiService.cancleOrders(orderParamList);
+			log.info("执行批量撤单结果为:"+JSONObject.toJSONString(resultMap));
 			//
 		}
-		spotOrderApiService.cancleOrders(orderParamList);
+		
+	}
+
+	@Override
+	public void cancel(String currency) {
+		OkexGridPlanExample  exam = new OkexGridPlanExample();
+		exam.createCriteria().andCurrencyEqualTo(currency).andBuystsEqualTo("open")
+		.andSellstsEqualTo("00");
+		List<OkexGridPlan> gridList =  gridPlanMapper.selectByExample(exam);
+		for(OkexGridPlan grid : gridList) {
+			PlaceOrderParam orderParam  =  new PlaceOrderParam();
+			orderParam.setInstrument_id(grid.getCurrency().toLowerCase());
+			orderParam.setClient_oid(grid.getBuyid());
+			OrderResult result = spotOrderApiService.cancleOrderByOrderId(orderParam, "");
+			log.info("撤销: "+grid.getBuyid()+"结果 :"+JSONObject.toJSONString(result));
+			if(!"-1".equals(result.getOrder_id().toString())){
+				extMapper.upateTo9999(grid.getBuyid(),currency);
+			}
+		}
 	}
 }
