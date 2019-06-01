@@ -21,4 +21,5 @@ public interface OkexExtMapper {
 	int selectBuyOrderNum(@Param("orderId") String orderId);
 	int selectSellOrderNum(@Param("orderId") String orderId);
 	double selectOnchangePercent(@Param("buyOnePrice") BigDecimal buyOnePrice,@Param("currency") String currency);
+	BigDecimal selectMinFilledOpen(@Param("currency") String currency);
 }

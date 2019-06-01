@@ -72,6 +72,11 @@ public class OkexGridExtraServiceImpl implements OkexGridExtraServiceI {
 		try {	
 			Ticker ticker = spotProductAPIService.getTickerByProductId(currency);		
 			buyOnePrice = new BigDecimal(ticker.getBest_bid());
+			BigDecimal minFilledOpen = extMapper.selectMinFilledOpen(currency);
+			minFilledOpen = minFilledOpen.multiply(BigDecimal.valueOf(1-x));
+			if(minFilledOpen.compareTo(buyOnePrice) < 0) {
+				buyOnePrice = minFilledOpen;
+			}
 			for(OkexGridPlan gridPlan:planGridList) {
 				plan = packGridPlan(spotAccountAPIService,gridPlan,buyOnePrice);			
 				orderParam = packBuyParam(plan);
