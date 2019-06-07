@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
-import com.okex.trande.serviceI.ESTestServiceI;
 import com.okex.trande.serviceI.OkexAdaMainFlowServiceI;
 import com.okex.trande.serviceI.OkexPublicServiceI;
 import com.okex.trande.utils.HttpUtils;
@@ -22,7 +21,6 @@ public class OkexQueryController {
 	OkexPublicServiceI okexPublicService;
 	@Autowired
 	OkexAdaMainFlowServiceI okexMainFlowService;
-	@Autowired ESTestServiceI ESTestService;
 	@RequestMapping("/test")
 	@ResponseBody
 	public String test(HttpServletRequest request) throws Exception {
@@ -45,7 +43,7 @@ public class OkexQueryController {
 	@RequestMapping("/index")
 	@ResponseBody
 	public String index() {
-		ESTestService.execute();
+		
 		return null;
 		
 	}

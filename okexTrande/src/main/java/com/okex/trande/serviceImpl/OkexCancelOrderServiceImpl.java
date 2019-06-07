@@ -66,9 +66,9 @@ public class OkexCancelOrderServiceImpl implements OkexCancelOrderServiceI {
 	
 			for(OrderInfo orderInfo:orderInfoList) {
 				if(!"-1".equals(orderInfo)) {
-					orderInfo.getOrder_id();
-					orderInfo.getStatus();
 					extMapper.upateTo9999(orderInfo.getClient_oid(),currency);
+				}else {
+					log.info("撤单失败订单:"+JSONObject.toJSONString(orderInfo));
 				}
 				
 			}
@@ -98,7 +98,7 @@ public class OkexCancelOrderServiceImpl implements OkexCancelOrderServiceI {
 			orderParam.setOrder_ids(orderSubList);
 			orderParamList.add(orderParam);
 			log.info("批量撤单请求数据为:"+JSONObject.toJSONString(orderParamList));
-			resultMap = spotOrderApiService.cancleOrders(orderParamList);
+			resultMap = spotOrderApiService.cancleOrders_post(orderParamList);
 			log.info("执行批量撤单结果为:"+JSONObject.toJSONString(resultMap));
 			//
 		}

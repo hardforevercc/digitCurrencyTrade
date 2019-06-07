@@ -2,6 +2,7 @@ package com.okex.trande.serviceImpl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,13 +55,13 @@ public class OkexGridByDayServiceImpl implements OkexGridByDayServiceI {
 		try {
 			List<OrderInfo> infoList =  spotOrderApiService.
 					getOrders(currency, sts, null, null, null);
-			log.info(JSONObject.toJSONString(infoList));
+			//log.info(JSONObject.toJSONString(infoList));
 			if(null == infoList || infoList.size() < 1) {
 				log.info("无状态为:"+sts+"交易记录");
 				return;
 			}
 			log.info("状态为"+sts+"订单数量为:"+infoList.size());
-			log.info("状态为"+sts+"订单信息为:"+JSONObject.toJSONString(infoList));
+			//log.info("状态为"+sts+"订单信息为:"+JSONObject.toJSONString(infoList));
 			OkexGridPlan plan = null;
 			OkexGridPlanExample planExam = new OkexGridPlanExample();
 			
@@ -75,6 +76,7 @@ public class OkexGridByDayServiceImpl implements OkexGridByDayServiceI {
 						plan.setActbuyamount(new BigDecimal(orderInfo.getFilled_size()));
 						plan.setActbuyprice(new BigDecimal(orderInfo.getFilled_notional()));
 						plan.setBuysts(orderInfo.getStatus());
+						plan.setUpdateDate(new Date());
 						log.info("更新买入订单为:"+orderInfo.getOrder_id().toString());
 						planExam.createCriteria().andBuyidEqualTo(orderInfo.getClient_oid()).andBuystsNotIn(list);
 						gridPlanMapper.updateByExampleSelective(plan, planExam);
@@ -88,6 +90,7 @@ public class OkexGridByDayServiceImpl implements OkexGridByDayServiceI {
 						plan.setActsellamount(new BigDecimal(orderInfo.getFilled_size()));
 						plan.setActsellprice(new BigDecimal(orderInfo.getFilled_notional()));
 						plan.setSellsts(orderInfo.getStatus());
+						plan.setUpdateDate(new Date());
 						log.info("更新卖出订单为:"+orderInfo.getOrder_id().toString());
 						planExam.createCriteria().andSellidEqualTo(orderInfo.getClient_oid().toString()).andSellstsNotIn(list);
 						gridPlanMapper.updateByExampleSelective(plan, planExam);
