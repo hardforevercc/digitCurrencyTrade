@@ -73,10 +73,18 @@ public class OkexGridExtraServiceImpl implements OkexGridExtraServiceI {
 			Ticker ticker = spotProductAPIService.getTickerByProductId(currency);		
 			buyOnePrice = new BigDecimal(ticker.getBest_bid());
 			BigDecimal minFilledOpen = extMapper.selectMinFilledOpen(currency);
-			minFilledOpen = minFilledOpen.multiply(BigDecimal.valueOf(1-x));
-			if(minFilledOpen.compareTo(buyOnePrice) < 0) {
-				buyOnePrice = minFilledOpen;
+			
+			if(null == minFilledOpen || BigDecimal.ZERO.compareTo(minFilledOpen) == 0) {
+				
+			}else {
+				if(minFilledOpen.compareTo(buyOnePrice) < 0) {
+					
+				}else {
+					buyOnePrice = minFilledOpen.multiply(BigDecimal.valueOf(1-x));
+				}
+				
 			}
+			
 			for(OkexGridPlan gridPlan:planGridList) {
 				plan = packGridPlan(spotAccountAPIService,gridPlan,buyOnePrice);			
 				orderParam = packBuyParam(plan);
@@ -124,11 +132,13 @@ public class OkexGridExtraServiceImpl implements OkexGridExtraServiceI {
 		plan.setAmount(buyAmount);
 		plan.setBuyid(currencyType+CommonUtils.getTime()+"b");
 		plan.setBuysts("00");
+		plan.setBuyamt(buyAmount);
 		plan.setCreateDate(new Date());
 		plan.setSellprice(buyOnePrice.multiply(BigDecimal.ONE.add(BigDecimal.valueOf(x))));
 		plan.setSellid(currencyType+CommonUtils.getTime()+"s");
 		plan.setSellsts("00");
 		plan.setCurrency(gridPlan.getCurrency());
+		plan.setUpdateDate(new Date());
 		return plan;
 	}
 	

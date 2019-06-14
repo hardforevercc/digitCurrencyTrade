@@ -1,5 +1,6 @@
 package com.okex.trande.serviceImpl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,10 +45,19 @@ public class OkexGridSellServiceImpl implements OkexGridSellServiceI {
 		OkexGridPlan plan = new OkexGridPlan();
 		OkexGridPlanExample planExa = new OkexGridPlanExample();
 		for(OrderResult result:OrderResultList) {
-			plan.setSellorderid(result.getOrder_id().toString());
-			plan.setSellsts("open");
-			planExa.createCriteria().andSellidEqualTo(result.getClient_oid());
-			planMapper.updateByExampleSelective(plan, planExa);
+			if(-1 == result.getOrder_id()) {
+				planExa.createCriteria().andSellidEqualTo(result.getClient_oid());
+				List<OkexGridPlan> planList = planMapper.selectByExample(planExa);
+				plan.setAmount(planList.get(0).getAmount().subtract(BigDecimal.ONE));
+				planMapper.updateByExampleSelective(plan, planExa);
+				log.info(currency+" 更新下单失败数据成功: "+result.getClient_oid());
+			}else {
+				plan.setSellorderid(result.getOrder_id().toString());
+				plan.setSellsts("open");
+				planExa.createCriteria().andSellidEqualTo(result.getClient_oid());
+				planMapper.updateByExampleSelective(plan, planExa);
+			}
+			
 		}
 	}
 	
