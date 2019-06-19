@@ -66,6 +66,10 @@
 	SELECT MIN(buyPrice) FROM okex_grid_plan WHERE buySts = 'filled' AND sellSts = 'open' 
 	and currency = #{currency}  
   </select>
+  <select id="selectMinFilledOpenSell"  resultType="java.math.BigDecimal">
+	SELECT MIN(sellPrice) FROM okex_grid_plan WHERE buySts = 'filled' AND sellSts = 'open' 
+	and currency = #{currency}  
+  </select>
   
   <!-- gridPlan批量插入 -->
   <insert id="insertGridPlanList" useGeneratedKeys="true" keyProperty="id">

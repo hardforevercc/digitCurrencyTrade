@@ -53,11 +53,11 @@ public class OkexGridExtraServiceImpl implements OkexGridExtraServiceI {
 			planExam.createCriteria().andBuystsEqualTo("filled").
 			andSellstsEqualTo("filled").andCurrencyEqualTo(currency);	
 			planGridList = gridPlanMapper.selectByExample(planExam);
-			
-			if(planGridList == null || planGridList.size() <0) {
+			if(planGridList == null || planGridList.size() <=0) {
 				log.info("无成交交易,不执行补充计划");
 				return;
 			}
+			log.info("当前买入卖出状态为fille订单数量为:"+planGridList.size());
 		}catch(Exception e) {
 			log.error("查询交易失败",e);
 			return;
@@ -73,12 +73,21 @@ public class OkexGridExtraServiceImpl implements OkexGridExtraServiceI {
 			Ticker ticker = spotProductAPIService.getTickerByProductId(currency);		
 			buyOnePrice = new BigDecimal(ticker.getBest_bid());
 			BigDecimal minFilledOpen = extMapper.selectMinFilledOpen(currency);
-			
+			BigDecimal minFilledOpenSell = extMapper.selectMinFilledOpenSell(currency);
+			log.info("补充买入订单:当前市场价格 = "+buyOnePrice);
 			if(null == minFilledOpen || BigDecimal.ZERO.compareTo(minFilledOpen) == 0) {
 				
 			}else {
-				if(minFilledOpen.compareTo(buyOnePrice) < 0) {
-					
+				//当前价格> 最小已买入价格订单 && 当前价格 < 最小正在卖出订单--> 下单价为buyOnePrice*(1-x)
+				if(minFilledOpen.compareTo(buyOnePrice) < 0 && minFilledOpenSell.compareTo(buyOnePrice) > 0) {
+					buyOnePrice = buyOnePrice.multiply(BigDecimal.valueOf(1-x));
+					log.info("补充买入订单:当前价格[> 最小已买入价格订单 && <最小正在卖出订单 ][下单价格 = "+buyOnePrice);
+					//当前价格*(1+x/2) > 最小已买入价格订单--> 下单价为buyOnePrice*(1-x)
+				}else if(buyOnePrice.compareTo(minFilledOpen) <0) {
+					if(buyOnePrice.multiply(BigDecimal.valueOf(1+x/2)).compareTo(minFilledOpen) >0) {
+						buyOnePrice = buyOnePrice.multiply(BigDecimal.valueOf(1-x));
+						log.info("补充买入订单:当前价格[当前价格*(1+x/2) > 最小已买入价格订单 ][下单价格 = "+buyOnePrice);
+					}
 				}else {
 					buyOnePrice = minFilledOpen.multiply(BigDecimal.valueOf(1-x));
 				}
