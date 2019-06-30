@@ -3,6 +3,7 @@ package com.okex.trande.serviceImpl;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -31,6 +32,7 @@ public class OkexDealChangeServiceImpl implements OkexDealChangeServiceI {
 	@Autowired SpotOrderAPIServive spotOrderApiService;
 	@Autowired OkexDealChangePlanMapper planMapper;
 	private static BigDecimal configAmt;
+	private static BigDecimal x;
 	@Override
 	public void execute(String currency) {
 		BigDecimal totalAmt = getAvaliable("USDT");
@@ -39,12 +41,16 @@ public class OkexDealChangeServiceImpl implements OkexDealChangeServiceI {
 		}
 		log.info("获取{}可用余额成功:avaliable = {}","USDT",totalAmt);
 		//获取当前可买入金额比例
-		double percent = 0.00;
+		BigDecimal percent = null;
 		BigDecimal buyPrice = null;
+		Map<String,BigDecimal> dealMap = null;
+		Ticker ticker = null;
 		try {
-			Ticker ticker = spotProductAPIService.getTickerByProductId(currency);		
+			ticker = spotProductAPIService.getTickerByProductId(currency);		
 			buyPrice = new BigDecimal(ticker.getBest_bid());
-			percent = extMapper.selectOnchangePercent(buyPrice,currency);
+			dealMap = extMapper.selectDealChangeConfig(currency,ticker.getBest_bid());
+			percent = dealMap.get("deal_percent");
+			x = dealMap.get("x");
 		}catch(Exception e) {
 			log.error("获取支配资金比例失败",e);
 			return;
@@ -55,24 +61,33 @@ public class OkexDealChangeServiceImpl implements OkexDealChangeServiceI {
 		 * 1.当前价格买入,卖出成功则继续以当前价格买入
 		 * 2.价格低于当前价格1%买入,卖出成功则继续以该策略执行
 		 */
-		percent = percent/2;
-		totalAmt = totalAmt.multiply(BigDecimal.valueOf(percent));
+		percent = CommonUtils.divide(percent, BigDecimal.valueOf(2));	
+		totalAmt = totalAmt.multiply(percent);
+		//查询是否存在未完成A 查询是否存在未完成B
+		int aNum = extMapper.selectDealChangeRecord(currency,ticker.getBest_bid(),"A");
 		//生成执行计划
-		OkexDealChangePlan plan1 = createOkexDealChangePlan(currency,totalAmt,buyPrice,"A");
-		if(null == plan1) {
-			log.info("plan1 执行计划生成失败");
-			return;
+		if(aNum < 1) {
+			BigDecimal plan1BuyPrice = new BigDecimal(ticker.getBest_ask());
+			OkexDealChangePlan plan1 = createOkexDealChangePlan(currency,totalAmt,plan1BuyPrice,"A");
+			if(null == plan1) {
+				log.info("plan1 执行计划生成失败");
+				return;
+			}
+			createOrder(plan1);
+			log.info("生成{}订单1:当前价买入成功,买入金额为 = {},买价格为 = {}",currency,totalAmt,plan1BuyPrice);
 		}
-		BigDecimal buyPrice2 = buyPrice.multiply(BigDecimal.valueOf(1-0.01));
-		OkexDealChangePlan plan2 = createOkexDealChangePlan(currency,totalAmt,buyPrice,"A");
-		if(null == plan2) {
-			log.info("plan2 执行计划生成失败");
-			return;
+		
+		int bNum = extMapper.selectDealChangeRecord(currency,ticker.getBest_bid(),"A");
+		if(bNum < 1) {
+			BigDecimal buyPrice2 = new BigDecimal(ticker.getBest_bid()).multiply(BigDecimal.ONE.subtract(x));
+			OkexDealChangePlan plan2 = createOkexDealChangePlan(currency,totalAmt,buyPrice2,"A");
+			if(null == plan2) {
+				log.info("plan2 执行计划生成失败");
+				return;
+			}
+			createOrder(plan2);
+			log.info("生成{}订单2:当前价买入成功,买入金额为 = {},买价格为 = {}",currency,totalAmt,buyPrice2);
 		}
-		createOrder(plan1);
-		log.info("生成{}订单1:当前价买入成功,买入金额为 = {},买价格为 = {}",currency,totalAmt,buyPrice);
-		createOrder(plan2);
-		log.info("生成{}订单2:当前价买入成功,买入金额为 = {},买价格为 = {}",currency,totalAmt,buyPrice2);
 		
 		
 	}
@@ -80,7 +95,7 @@ public class OkexDealChangeServiceImpl implements OkexDealChangeServiceI {
 	private OkexDealChangePlan createOkexDealChangePlan(String currency,BigDecimal buyPrice,BigDecimal totalAmt,String flag) {
 		OkexDealChangePlan plan = new OkexDealChangePlan();
 		BigDecimal amount = CommonUtils.divide(totalAmt, buyPrice);
-		BigDecimal sellPrice = buyPrice.multiply(BigDecimal.valueOf(1+0.01));
+		BigDecimal sellPrice = buyPrice.multiply(BigDecimal.ONE.add(x));
 		String currencyType = currency.replaceAll("-", "");
 		plan.setType("onChange");
 		plan.setCurrency(currency);
@@ -123,7 +138,7 @@ public class OkexDealChangeServiceImpl implements OkexDealChangeServiceI {
 				return true;
 			}
 			plan.setBuyorderid(result1.getOrder_id().toString());
-			plan.setBuysts("filled");
+			plan.setBuysts("open");
 			plan.setCreateDate(new Date());
 			OkexDealChangePlanExample example = new OkexDealChangePlanExample();
 			example.createCriteria().andBuyidEqualTo(plan.getBuyid());

@@ -2,6 +2,7 @@ package com.okex.mybatis.dao;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -23,4 +24,7 @@ public interface OkexExtMapper {
 	double selectOnchangePercent(@Param("buyOnePrice") BigDecimal buyOnePrice,@Param("currency") String currency);
 	BigDecimal selectMinFilledOpen(@Param("currency") String currency);
 	BigDecimal selectMinFilledOpenSell(@Param("currency") String currency);
+	Map<String,BigDecimal> selectDealChangeConfig(@Param("currency") String currency,@Param("price") String price);
+	
+	int selectDealChangeRecord(@Param("currency") String currency,@Param("price") String price,@Param("type") String type);
 }

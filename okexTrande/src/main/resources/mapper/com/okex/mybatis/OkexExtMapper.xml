@@ -70,7 +70,17 @@
 	SELECT MIN(sellPrice) FROM okex_grid_plan WHERE buySts = 'filled' AND sellSts = 'open' 
 	and currency = #{currency}  
   </select>
-  
+  <!-- deal_change_config 查询 -->
+  <select id="selectDealChangeConfig"  resultType="java.util.HashMap">
+  	SELECT deal_percent,x FROM okex_deal_change_config WHERE left_deal_price &lt;= #{price} 
+	AND right_deal_price > #{price}  AND currency = #{currency}
+  </select>
+  <select id="selectDealChangeRecord" resultType="java.lang.Integer">
+  	SELECT COUNT(1) FROM okex_deal_change_plan WHERE id = 
+	(SELECT id FROM okex_deal_change_config WHERE left_deal_price &lt;= #{price} 
+	AND right_deal_price > #{price}  AND currency = #{currency}) 
+	AND type = #{type} AND buySts in('filled','open')
+  </select>
   <!-- gridPlan批量插入 -->
   <insert id="insertGridPlanList" useGeneratedKeys="true" keyProperty="id">
   	insert into okex_Grid_Plan (currency, buyPrice, sellPrice, amount,buyAmt,

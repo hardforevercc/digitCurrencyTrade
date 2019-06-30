@@ -202,6 +202,66 @@ public class OkexDealChangePlanExample {
             return (Criteria) this;
         }
 
+        public Criteria andConfigIdIsNull() {
+            addCriterion("config_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andConfigIdIsNotNull() {
+            addCriterion("config_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andConfigIdEqualTo(Integer value) {
+            addCriterion("config_id =", value, "configId");
+            return (Criteria) this;
+        }
+
+        public Criteria andConfigIdNotEqualTo(Integer value) {
+            addCriterion("config_id <>", value, "configId");
+            return (Criteria) this;
+        }
+
+        public Criteria andConfigIdGreaterThan(Integer value) {
+            addCriterion("config_id >", value, "configId");
+            return (Criteria) this;
+        }
+
+        public Criteria andConfigIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("config_id >=", value, "configId");
+            return (Criteria) this;
+        }
+
+        public Criteria andConfigIdLessThan(Integer value) {
+            addCriterion("config_id <", value, "configId");
+            return (Criteria) this;
+        }
+
+        public Criteria andConfigIdLessThanOrEqualTo(Integer value) {
+            addCriterion("config_id <=", value, "configId");
+            return (Criteria) this;
+        }
+
+        public Criteria andConfigIdIn(List<Integer> values) {
+            addCriterion("config_id in", values, "configId");
+            return (Criteria) this;
+        }
+
+        public Criteria andConfigIdNotIn(List<Integer> values) {
+            addCriterion("config_id not in", values, "configId");
+            return (Criteria) this;
+        }
+
+        public Criteria andConfigIdBetween(Integer value1, Integer value2) {
+            addCriterion("config_id between", value1, value2, "configId");
+            return (Criteria) this;
+        }
+
+        public Criteria andConfigIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("config_id not between", value1, value2, "configId");
+            return (Criteria) this;
+        }
+
         public Criteria andTypeIsNull() {
             addCriterion("type is null");
             return (Criteria) this;
@@ -862,63 +922,63 @@ public class OkexDealChangePlanExample {
             return (Criteria) this;
         }
 
-        public Criteria andActbuypriceIsNull() {
-            addCriterion("actBuyPrice is null");
+        public Criteria andActbuyamtIsNull() {
+            addCriterion("actBuyAmt is null");
             return (Criteria) this;
         }
 
-        public Criteria andActbuypriceIsNotNull() {
-            addCriterion("actBuyPrice is not null");
+        public Criteria andActbuyamtIsNotNull() {
+            addCriterion("actBuyAmt is not null");
             return (Criteria) this;
         }
 
-        public Criteria andActbuypriceEqualTo(BigDecimal value) {
-            addCriterion("actBuyPrice =", value, "actbuyprice");
+        public Criteria andActbuyamtEqualTo(BigDecimal value) {
+            addCriterion("actBuyAmt =", value, "actbuyamt");
             return (Criteria) this;
         }
 
-        public Criteria andActbuypriceNotEqualTo(BigDecimal value) {
-            addCriterion("actBuyPrice <>", value, "actbuyprice");
+        public Criteria andActbuyamtNotEqualTo(BigDecimal value) {
+            addCriterion("actBuyAmt <>", value, "actbuyamt");
             return (Criteria) this;
         }
 
-        public Criteria andActbuypriceGreaterThan(BigDecimal value) {
-            addCriterion("actBuyPrice >", value, "actbuyprice");
+        public Criteria andActbuyamtGreaterThan(BigDecimal value) {
+            addCriterion("actBuyAmt >", value, "actbuyamt");
             return (Criteria) this;
         }
 
-        public Criteria andActbuypriceGreaterThanOrEqualTo(BigDecimal value) {
-            addCriterion("actBuyPrice >=", value, "actbuyprice");
+        public Criteria andActbuyamtGreaterThanOrEqualTo(BigDecimal value) {
+            addCriterion("actBuyAmt >=", value, "actbuyamt");
             return (Criteria) this;
         }
 
-        public Criteria andActbuypriceLessThan(BigDecimal value) {
-            addCriterion("actBuyPrice <", value, "actbuyprice");
+        public Criteria andActbuyamtLessThan(BigDecimal value) {
+            addCriterion("actBuyAmt <", value, "actbuyamt");
             return (Criteria) this;
         }
 
-        public Criteria andActbuypriceLessThanOrEqualTo(BigDecimal value) {
-            addCriterion("actBuyPrice <=", value, "actbuyprice");
+        public Criteria andActbuyamtLessThanOrEqualTo(BigDecimal value) {
+            addCriterion("actBuyAmt <=", value, "actbuyamt");
             return (Criteria) this;
         }
 
-        public Criteria andActbuypriceIn(List<BigDecimal> values) {
-            addCriterion("actBuyPrice in", values, "actbuyprice");
+        public Criteria andActbuyamtIn(List<BigDecimal> values) {
+            addCriterion("actBuyAmt in", values, "actbuyamt");
             return (Criteria) this;
         }
 
-        public Criteria andActbuypriceNotIn(List<BigDecimal> values) {
-            addCriterion("actBuyPrice not in", values, "actbuyprice");
+        public Criteria andActbuyamtNotIn(List<BigDecimal> values) {
+            addCriterion("actBuyAmt not in", values, "actbuyamt");
             return (Criteria) this;
         }
 
-        public Criteria andActbuypriceBetween(BigDecimal value1, BigDecimal value2) {
-            addCriterion("actBuyPrice between", value1, value2, "actbuyprice");
+        public Criteria andActbuyamtBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("actBuyAmt between", value1, value2, "actbuyamt");
             return (Criteria) this;
         }
 
-        public Criteria andActbuypriceNotBetween(BigDecimal value1, BigDecimal value2) {
-            addCriterion("actBuyPrice not between", value1, value2, "actbuyprice");
+        public Criteria andActbuyamtNotBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("actBuyAmt not between", value1, value2, "actbuyamt");
             return (Criteria) this;
         }
 
@@ -982,63 +1042,63 @@ public class OkexDealChangePlanExample {
             return (Criteria) this;
         }
 
-        public Criteria andActsellpriceIsNull() {
-            addCriterion("actSellPrice is null");
+        public Criteria andActsellamtIsNull() {
+            addCriterion("actSellAmt is null");
             return (Criteria) this;
         }
 
-        public Criteria andActsellpriceIsNotNull() {
-            addCriterion("actSellPrice is not null");
+        public Criteria andActsellamtIsNotNull() {
+            addCriterion("actSellAmt is not null");
             return (Criteria) this;
         }
 
-        public Criteria andActsellpriceEqualTo(BigDecimal value) {
-            addCriterion("actSellPrice =", value, "actsellprice");
+        public Criteria andActsellamtEqualTo(BigDecimal value) {
+            addCriterion("actSellAmt =", value, "actsellamt");
             return (Criteria) this;
         }
 
-        public Criteria andActsellpriceNotEqualTo(BigDecimal value) {
-            addCriterion("actSellPrice <>", value, "actsellprice");
+        public Criteria andActsellamtNotEqualTo(BigDecimal value) {
+            addCriterion("actSellAmt <>", value, "actsellamt");
             return (Criteria) this;
         }
 
-        public Criteria andActsellpriceGreaterThan(BigDecimal value) {
-            addCriterion("actSellPrice >", value, "actsellprice");
+        public Criteria andActsellamtGreaterThan(BigDecimal value) {
+            addCriterion("actSellAmt >", value, "actsellamt");
             return (Criteria) this;
         }
 
-        public Criteria andActsellpriceGreaterThanOrEqualTo(BigDecimal value) {
-            addCriterion("actSellPrice >=", value, "actsellprice");
+        public Criteria andActsellamtGreaterThanOrEqualTo(BigDecimal value) {
+            addCriterion("actSellAmt >=", value, "actsellamt");
             return (Criteria) this;
         }
 
-        public Criteria andActsellpriceLessThan(BigDecimal value) {
-            addCriterion("actSellPrice <", value, "actsellprice");
+        public Criteria andActsellamtLessThan(BigDecimal value) {
+            addCriterion("actSellAmt <", value, "actsellamt");
             return (Criteria) this;
         }
 
-        public Criteria andActsellpriceLessThanOrEqualTo(BigDecimal value) {
-            addCriterion("actSellPrice <=", value, "actsellprice");
+        public Criteria andActsellamtLessThanOrEqualTo(BigDecimal value) {
+            addCriterion("actSellAmt <=", value, "actsellamt");
             return (Criteria) this;
         }
 
-        public Criteria andActsellpriceIn(List<BigDecimal> values) {
-            addCriterion("actSellPrice in", values, "actsellprice");
+        public Criteria andActsellamtIn(List<BigDecimal> values) {
+            addCriterion("actSellAmt in", values, "actsellamt");
             return (Criteria) this;
         }
 
-        public Criteria andActsellpriceNotIn(List<BigDecimal> values) {
-            addCriterion("actSellPrice not in", values, "actsellprice");
+        public Criteria andActsellamtNotIn(List<BigDecimal> values) {
+            addCriterion("actSellAmt not in", values, "actsellamt");
             return (Criteria) this;
         }
 
-        public Criteria andActsellpriceBetween(BigDecimal value1, BigDecimal value2) {
-            addCriterion("actSellPrice between", value1, value2, "actsellprice");
+        public Criteria andActsellamtBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("actSellAmt between", value1, value2, "actsellamt");
             return (Criteria) this;
         }
 
-        public Criteria andActsellpriceNotBetween(BigDecimal value1, BigDecimal value2) {
-            addCriterion("actSellPrice not between", value1, value2, "actsellprice");
+        public Criteria andActsellamtNotBetween(BigDecimal value1, BigDecimal value2) {
+            addCriterion("actSellAmt not between", value1, value2, "actsellamt");
             return (Criteria) this;
         }
 

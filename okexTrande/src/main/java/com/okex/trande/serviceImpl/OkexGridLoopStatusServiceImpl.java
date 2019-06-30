@@ -36,7 +36,7 @@ public class OkexGridLoopStatusServiceImpl implements OkexGridLoopStatusServiceI
 			okexGridExtraService.execute(currency);
 			log.info("已交易交易下单成功");
 			try {
-				Thread.sleep(300000);
+				Thread.sleep(100000);
 			} catch (InterruptedException e) {
 				log.info("睡眠线程执行异常",e);
 				Thread.currentThread().notifyAll();

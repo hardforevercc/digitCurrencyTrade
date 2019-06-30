@@ -12,6 +12,13 @@ public class OkexDealChangePlan {
     private Integer id;
 
     /**
+     * 配置ID
+     * 表 : okex_deal_change_plan
+     * 对应字段 : config_id
+     */
+    private Integer configId;
+
+    /**
      * 策略类型
      * 表 : okex_deal_change_plan
      * 对应字段 : type
@@ -84,9 +91,9 @@ public class OkexDealChangePlan {
     /**
      * 实际买入价格
      * 表 : okex_deal_change_plan
-     * 对应字段 : actBuyPrice
+     * 对应字段 : actBuyAmt
      */
-    private BigDecimal actbuyprice;
+    private BigDecimal actbuyamt;
 
     /**
      * 实际买入量
@@ -98,9 +105,9 @@ public class OkexDealChangePlan {
     /**
      * 实际卖出价格
      * 表 : okex_deal_change_plan
-     * 对应字段 : actSellPrice
+     * 对应字段 : actSellAmt
      */
-    private BigDecimal actsellprice;
+    private BigDecimal actsellamt;
 
     /**
      * 实际卖出数量
@@ -156,6 +163,24 @@ public class OkexDealChangePlan {
      */
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    /**
+     * get method 
+     *
+     * @return okex_deal_change_plan.config_id：配置ID
+     */
+    public Integer getConfigId() {
+        return configId;
+    }
+
+    /**
+     * set method 
+     *
+     * @param configId  配置ID
+     */
+    public void setConfigId(Integer configId) {
+        this.configId = configId;
     }
 
     /**
@@ -341,19 +366,19 @@ public class OkexDealChangePlan {
     /**
      * get method 
      *
-     * @return okex_deal_change_plan.actBuyPrice：实际买入价格
+     * @return okex_deal_change_plan.actBuyAmt：实际买入价格
      */
-    public BigDecimal getActbuyprice() {
-        return actbuyprice;
+    public BigDecimal getActbuyamt() {
+        return actbuyamt;
     }
 
     /**
      * set method 
      *
-     * @param actbuyprice  实际买入价格
+     * @param actbuyamt  实际买入价格
      */
-    public void setActbuyprice(BigDecimal actbuyprice) {
-        this.actbuyprice = actbuyprice;
+    public void setActbuyamt(BigDecimal actbuyamt) {
+        this.actbuyamt = actbuyamt;
     }
 
     /**
@@ -377,19 +402,19 @@ public class OkexDealChangePlan {
     /**
      * get method 
      *
-     * @return okex_deal_change_plan.actSellPrice：实际卖出价格
+     * @return okex_deal_change_plan.actSellAmt：实际卖出价格
      */
-    public BigDecimal getActsellprice() {
-        return actsellprice;
+    public BigDecimal getActsellamt() {
+        return actsellamt;
     }
 
     /**
      * set method 
      *
-     * @param actsellprice  实际卖出价格
+     * @param actsellamt  实际卖出价格
      */
-    public void setActsellprice(BigDecimal actsellprice) {
-        this.actsellprice = actsellprice;
+    public void setActsellamt(BigDecimal actsellamt) {
+        this.actsellamt = actsellamt;
     }
 
     /**
