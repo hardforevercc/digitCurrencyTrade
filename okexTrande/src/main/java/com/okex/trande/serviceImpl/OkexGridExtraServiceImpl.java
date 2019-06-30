@@ -75,8 +75,10 @@ public class OkexGridExtraServiceImpl implements OkexGridExtraServiceI {
 			BigDecimal minFilledOpen = extMapper.selectMinFilledOpen(currency);
 			BigDecimal minFilledOpenSell = extMapper.selectMinFilledOpenSell(currency);
 			log.info("补充买入订单:当前市场价格 = "+buyOnePrice);
+			//若当前无买入中订单
 			if(null == minFilledOpen || BigDecimal.ZERO.compareTo(minFilledOpen) == 0) {
-				
+				log.info("当前无买入成功正在卖出中订单，卖一价为:"+ticker.getBest_ask());
+				buyOnePrice = new BigDecimal(ticker.getBest_ask());
 			}else {
 				//当前价格> 最小已买入价格订单 && 当前价格 < 最小正在卖出订单--> 下单价为buyOnePrice*(1-x)
 				if(minFilledOpen.compareTo(buyOnePrice) < 0 && minFilledOpenSell.compareTo(buyOnePrice) > 0) {

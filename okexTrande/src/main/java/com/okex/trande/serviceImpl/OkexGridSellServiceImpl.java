@@ -2,7 +2,6 @@ package com.okex.trande.serviceImpl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -37,28 +36,34 @@ public class OkexGridSellServiceImpl implements OkexGridSellServiceI {
 		if(null == sellList) {
 			return;
 		}
-		log.info("卖单执行结果为:"+JSONObject.toJSONString(sellList));
-		Map<String, List<OrderResult>> resultMap =  spotOrderApiService.addOrders(sellList);
-		//okex 返回报文变更.replaceAll("-", "_")
-		List<OrderResult> OrderResultList = resultMap.get(currency.toLowerCase());
-		log.info("卖单执行结果为:"+JSONObject.toJSONString(OrderResultList));
-		OkexGridPlan plan = new OkexGridPlan();
-		OkexGridPlanExample planExa = new OkexGridPlanExample();
-		for(OrderResult result:OrderResultList) {
-			if(-1 == result.getOrder_id()) {
-				planExa.createCriteria().andSellidEqualTo(result.getClient_oid());
-				List<OkexGridPlan> planList = planMapper.selectByExample(planExa);
-				plan.setAmount(planList.get(0).getAmount().subtract(BigDecimal.ONE));
-				planMapper.updateByExampleSelective(plan, planExa);
-				log.info(currency+" 更新下单失败数据成功: "+result.getClient_oid());
-			}else {
-				plan.setSellorderid(result.getOrder_id().toString());
-				plan.setSellsts("open");
-				planExa.createCriteria().andSellidEqualTo(result.getClient_oid());
-				planMapper.updateByExampleSelective(plan, planExa);
+		try {
+			log.info("卖单执行信息为:"+JSONObject.toJSONString(sellList));
+			Map<String, List<OrderResult>> resultMap =  spotOrderApiService.addOrders(sellList);
+			//okex 返回报文变更.replaceAll("-", "_")
+			log.info("卖单执行结果为:"+JSONObject.toJSONString(resultMap));
+			List<OrderResult> OrderResultList = resultMap.get(currency.toLowerCase());
+			log.info("卖单执行结果为:"+JSONObject.toJSONString(OrderResultList));
+			OkexGridPlan plan = new OkexGridPlan();
+			OkexGridPlanExample planExa = new OkexGridPlanExample();
+			for(OrderResult result:OrderResultList) {
+				if(-1 == result.getOrder_id()) {
+					planExa.createCriteria().andSellidEqualTo(result.getClient_oid());
+					List<OkexGridPlan> planList = planMapper.selectByExample(planExa);
+					plan.setAmount(planList.get(0).getAmount().subtract(BigDecimal.ONE));
+					planMapper.updateByExampleSelective(plan, planExa);
+					log.info(currency+" 更新下单失败数据成功: "+result.getClient_oid());
+				}else {
+					plan.setSellorderid(result.getOrder_id().toString());
+					plan.setSellsts("open");
+					planExa.createCriteria().andSellidEqualTo(result.getClient_oid());
+					planMapper.updateByExampleSelective(plan, planExa);
+				}
+				
 			}
-			
+		}catch(Exception e) {
+			log.error(currency+"执行卖出操作异常",e);
 		}
+		
 	}
 	
 	private static List<PlaceOrderParam> exeSell(OkexGridPlanMapper planMapper,OkexGridPlanExample sellExample) {
@@ -72,14 +77,17 @@ public class OkexGridSellServiceImpl implements OkexGridSellServiceI {
 			}
 			log.info("查询可卖出订单数量为:"+gridPlanList.size());
 			//封装委托卖出订单
+			BigDecimal amount = null;
 			for(OkexGridPlan grid:gridPlanList) {
 				log.info("执行卖出订单:"+ grid.getSellid());
+				amount = grid.getAmount().multiply(BigDecimal.valueOf(1-0.0012));
 				orderParam = new PlaceOrderParam();
 				orderParam.setClient_oid(grid.getSellid());
 				orderParam.setType("limit");
 				orderParam.setPrice(grid.getSellprice().toString());
-				orderParam.setSize(grid.getAmount().toString());
+				orderParam.setSize(amount.toString());
 				orderParam.setSide("sell");
+				orderParam.setMargin_trading((byte) 1);
 				orderParam.setInstrument_id(grid.getCurrency());
 				orderList.add(orderParam);
 			}

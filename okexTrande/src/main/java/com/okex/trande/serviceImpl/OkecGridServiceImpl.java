@@ -184,6 +184,7 @@ public class OkecGridServiceImpl implements OkecGridServiceI {
 			orderParam.setSize(grid.getAmount().toString());
 			orderParam.setSide("buy");			
 			orderParam.setInstrument_id(currency);
+			orderParam.setMargin_trading((byte) 1);
 			orderList.add(orderParam);
 		}
 		log.info("orderList:"+JSONObject.toJSONString(orderList));

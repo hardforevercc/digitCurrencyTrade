@@ -112,10 +112,13 @@ public class OkexCancelOrderServiceImpl implements OkexCancelOrderServiceI {
 		.andSellstsEqualTo("00");
 		List<OkexGridPlan> gridList =  gridPlanMapper.selectByExample(exam);
 		for(OkexGridPlan grid : gridList) {
+			log.info("{}需处理撤销订单为：{}",currency,JSONObject.toJSONString(grid));
 			PlaceOrderParam orderParam  =  new PlaceOrderParam();
 			orderParam.setInstrument_id(grid.getCurrency().toLowerCase());
 			orderParam.setClient_oid(grid.getBuyid());
-			OrderResult result = spotOrderApiService.cancleOrderByOrderId(orderParam, "");
+			orderParam.setOrder_id(grid.getBuyorderid());
+			log.info("{}撤销订单请求数据为：{}",currency,JSONObject.toJSONString(orderParam));
+			OrderResult result = spotOrderApiService.cancleOrderByOrderId(orderParam, grid.getSellorderid());
 			log.info("撤销: "+grid.getBuyid()+"结果 :"+JSONObject.toJSONString(result));
 			if(!"-1".equals(result.getOrder_id().toString())){
 				extMapper.upateTo9999(grid.getBuyid(),currency);

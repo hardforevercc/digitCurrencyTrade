@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
+import com.okcoin.commons.okex.open.api.service.spot.SpotOrderAPIServive;
 import com.okex.trande.serviceI.OkexAdaMainFlowServiceI;
 import com.okex.trande.serviceI.OkexPublicServiceI;
 import com.okex.trande.utils.HttpUtils;
@@ -17,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/base")
 public class OkexQueryController {
+	
+	@Autowired SpotOrderAPIServive spotOrderApiService;
 	@Autowired
 	OkexPublicServiceI okexPublicService;
 	@Autowired
@@ -43,8 +46,8 @@ public class OkexQueryController {
 	@RequestMapping("/index")
 	@ResponseBody
 	public String index() {
+		return JSONObject.toJSONString(spotOrderApiService.getOrderByOrderId("LRC-USDT", "LRCUSDT201906120406320040s"));
 		
-		return null;
 		
 	}
 }

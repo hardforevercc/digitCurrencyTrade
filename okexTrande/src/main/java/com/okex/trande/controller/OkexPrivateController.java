@@ -105,7 +105,7 @@ public class OkexPrivateController {
 		try {
 			reqMsg = HttpUtils.getMsg(request);
 			currency = JSONObject.parseObject(reqMsg).getString("currency");
-			cancelOrderService.batchCancel(currency);
+			cancelOrderService.cancel(currency);
 		}catch(Exception e) {
 			log.error("执行异常",e);
 		}
