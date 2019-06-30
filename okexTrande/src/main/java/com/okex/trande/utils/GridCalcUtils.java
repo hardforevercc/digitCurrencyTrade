@@ -1,7 +1,5 @@
 package com.okex.trande.utils;
 
-import java.math.BigDecimal;
-
 public class GridCalcUtils {
 	/**
 	 * 计算结果为y 底数为x

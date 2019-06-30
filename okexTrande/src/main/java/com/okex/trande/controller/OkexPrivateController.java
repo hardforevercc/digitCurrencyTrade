@@ -15,6 +15,7 @@ import com.okex.trande.serviceI.OkecGridServiceI;
 import com.okex.trande.serviceI.OkexAdaMainFlowServiceI;
 import com.okex.trande.serviceI.OkexAdaMainFlowV2ServiceI;
 import com.okex.trande.serviceI.OkexCancelOrderServiceI;
+import com.okex.trande.serviceI.OkexDealChangeServiceI;
 import com.okex.trande.serviceI.OkexGridByDayServiceI;
 import com.okex.trande.serviceI.OkexGridLoopStatusServiceI;
 import com.okex.trande.serviceI.OkexPrivateServiceI;
@@ -36,6 +37,7 @@ public class OkexPrivateController {
 	@Autowired OkexGridByDayServiceI gridByDayService;
 	@Autowired SpotOrderAPIServive spotOrderApiService;
 	@Autowired OkexCancelOrderServiceI cancelOrderService;
+	@Autowired OkexDealChangeServiceI dealChangeService;
 	
 	@RequestMapping("/getUserInfo")
 	public String getBalance(HttpServletRequest request) {
@@ -122,6 +124,22 @@ public class OkexPrivateController {
 			reqMsg = HttpUtils.getMsg(request);
 			currency = JSONObject.parseObject(reqMsg).getString("currency");
 			gridByDayService.execute(currency);
+		}catch(Exception e) {
+			log.error("执行异常",e);
+		}
+		
+		return resp;
+	}
+	
+	@RequestMapping("/loopOnChange")
+	public String loopOnChangeService(HttpServletRequest request) {
+		String reqMsg = null;
+		String currency = null;
+		String resp = null;
+		try {
+			reqMsg = HttpUtils.getMsg(request);
+			currency = JSONObject.parseObject(reqMsg).getString("currency");
+			dealChangeService.execute(currency);
 		}catch(Exception e) {
 			log.error("执行异常",e);
 		}

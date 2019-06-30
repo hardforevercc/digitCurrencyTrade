@@ -27,4 +27,6 @@ public interface OkexExtMapper {
 	Map<String,BigDecimal> selectDealChangeConfig(@Param("currency") String currency,@Param("price") String price);
 	
 	int selectDealChangeRecord(@Param("currency") String currency,@Param("price") String price,@Param("type") String type);
+	
+	int selectPriceId(@Param("currency") String currency,@Param("price") String price);
 }

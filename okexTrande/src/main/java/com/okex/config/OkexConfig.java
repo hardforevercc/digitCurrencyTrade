@@ -16,9 +16,12 @@ public class OkexConfig {
     public APIConfiguration okexApiConfig() {
         APIConfiguration config = new APIConfiguration();
         config.setEndpoint("https://www.okex.me");
+//        config.setApiKey(OkexEnum.OKEXTRADESHU.getApi_key());
+//        config.setSecretKey(OkexEnum.OKEXTRADESHU.getSecret_key());
+//        config.setPassphrase("qaz317605");
         config.setApiKey(OkexEnum.OKEXTRADE.getApi_key());
         config.setSecretKey(OkexEnum.OKEXTRADE.getSecret_key());
-        config.setPassphrase("cc1234");
+        config.setPassphrase("cc1234");        
         config.setPrint(false);
         return config;
     }
